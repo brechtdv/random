@@ -1,0 +1,50 @@
+---
+title: Grouped stacked barplots with nested x axis in highcharter
+author: Brecht Devleesschauwer
+date: '2020-06-20'
+slug: grouped-stacked-barplots-with-nested-x-axis-in-highcharter
+categories: []
+tags:
+  - highcharts
+---
+
+
+
+<pre class="r"><code>library(highcharter)</code></pre>
+<pre><code>## Registered S3 method overwritten by &#39;quantmod&#39;:
+##   method            from
+##   as.zoo.data.frame zoo</code></pre>
+<pre><code>## Highcharts (www.highcharts.com) is a Highsoft software product which is</code></pre>
+<pre><code>## not free for commercial and Governmental use</code></pre>
+<p>hello</p>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>## R version 4.0.0 (2020-04-24)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 10 x64 (build 18362)
+## 
+## Matrix products: default
+## 
+## locale:
+## [1] LC_COLLATE=English_Belgium.1252  LC_CTYPE=English_Belgium.1252   
+## [3] LC_MONETARY=English_Belgium.1252 LC_NUMERIC=C                    
+## [5] LC_TIME=English_Belgium.1252    
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] highcharter_0.7.0
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_1.0.4.6      pillar_1.4.4      compiler_4.0.0    tools_4.0.0      
+##  [5] xts_0.12-0        digest_0.6.25     jsonlite_1.6.1    lubridate_1.7.8  
+##  [9] evaluate_0.14     lifecycle_0.2.0   tibble_3.0.1      nlme_3.1-147     
+## [13] lattice_0.20-41   pkgconfig_2.0.3   rlang_0.4.6       igraph_1.2.5     
+## [17] curl_4.3          yaml_2.2.1        blogdown_0.19     xfun_0.14        
+## [21] dplyr_0.8.5       stringr_1.4.0     knitr_1.28        generics_0.0.2   
+## [25] vctrs_0.3.0       htmlwidgets_1.5.1 grid_4.0.0        tidyselect_1.1.0 
+## [29] data.table_1.12.8 glue_1.4.1        R6_2.4.1          rmarkdown_2.1    
+## [33] bookdown_0.19     whisker_0.4       TTR_0.23-6        purrr_0.3.4      
+## [37] tidyr_1.0.3       magrittr_1.5      backports_1.1.6   ellipsis_0.3.1   
+## [41] htmltools_0.4.0   rlist_0.4.6.1     assertthat_0.2.1  quantmod_0.4.17  
+## [45] stringi_1.4.6     broom_0.5.6       crayon_1.3.4      zoo_1.8-8</code></pre>

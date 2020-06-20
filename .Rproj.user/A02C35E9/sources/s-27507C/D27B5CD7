@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1592658592550.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4196874433",
+    "id" : "D27B5CD7",
+    "lastKnownWriteTime" : 1592658651,
+    "last_content_update" : 1592658651642,
+    "path" : "C:/Users/BrDe394/GitHub/random/content/post/2020-06-20-grouped-stacked-barplots-with-nested-x-axis-in-highcharter.Rmd",
+    "project_path" : "content/post/2020-06-20-grouped-stacked-barplots-with-nested-x-axis-in-highcharter.Rmd",
+    "properties" : {
+        "cursorPosition" : "14,5",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

@@ -1,9 +1,0 @@
----
-title: "Hello R Markdown"
-author: "Brecht Devleesschauwer"
-date: 2020-06-20
-categories: ["R"]
-tags: ["R Markdown", "plot", "regression"]
----
-
-# Test
