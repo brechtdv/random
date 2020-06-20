@@ -1,0 +1,20 @@
+---
+title: Grouped stacked barplots with nested x axis in highcharter
+author: Brecht Devleesschauwer
+date: '2020-06-20'
+slug: grouped-stacked-barplots-with-nested-x-axis-in-highcharter
+categories: []
+tags:
+  - highcharts
+---
+
+```{r settings}
+library(highcharter)
+```
+
+hello
+
+```{r sessionInfo}
+sessionInfo()
+```
+
