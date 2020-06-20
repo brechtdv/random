@@ -1,4 +1,4 @@
-baseURL = "https://brechtdv.github.io/random/"
+baseURL = "https://brechtdv.github.io/"
 publishDir = "docs"
 title = "Random R Chunks"
 author = "Brecht Devleesschauwer"
@@ -16,7 +16,7 @@ pygmentscodefences = true
 ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
 [params]
-  sitename = "Hugo Tanka Theme"
+  sitename = "Random R Chunks"
 
 [[menu.main]]
     name = "Home"
@@ -34,4 +34,3 @@ ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
     name = "Twitter"
     url = "https://twitter.com/brechtdv"
     weight = 4
-

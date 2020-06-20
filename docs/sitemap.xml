@@ -3,48 +3,58 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/random/categories/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
+    <loc>/categories/</loc>
+    <lastmod>2020-06-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/random/post/2015-07-23-r-rmarkdown/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
+    <loc>/post/2015-07-23-r-rmarkdown/</loc>
+    <lastmod>2020-06-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/random/tags/plot/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
+    <loc>/post/highcharts/</loc>
+    <lastmod>2020-06-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/random/post/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
+    <loc>/tags/highcharts/</loc>
+    <lastmod>2020-06-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/random/categories/r/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
+    <loc>/tags/plot/</loc>
+    <lastmod>2020-06-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/random/tags/r-markdown/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
+    <loc>/post/</loc>
+    <lastmod>2020-06-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/random/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
+    <loc>/categories/r/</loc>
+    <lastmod>2020-06-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/random/tags/regression/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
+    <loc>/tags/r-markdown/</loc>
+    <lastmod>2020-06-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/random/tags/</loc>
-    <lastmod>2015-07-23T21:13:14-05:00</lastmod>
+    <loc>/</loc>
+    <lastmod>2020-06-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/regression/</loc>
+    <lastmod>2020-06-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2020-06-20T00:00:00+00:00</lastmod>
   </url>
   
 </urlset>
