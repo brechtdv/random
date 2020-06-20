@@ -1,0 +1,36 @@
+baseurl = "/"
+title = "Random R Chunks"
+author = "Brecht Devleesschauwer"
+canonifyurls = true
+languagecode = "en"
+theme = "hugo-tanka"
+
+googleAnalytics = ""
+disqusShortname = ""
+disable_mathjax = false
+
+pygmentsstyle      = "vs"
+pygmentscodefences = true
+
+ignoreFiles = ["\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
+
+[params]
+  sitename = "Hugo Tanka Theme"
+
+[[menu.main]]
+    name = "Home"
+    url = "https://brecht.cbra.be"
+    weight = 1
+[[menu.main]]
+    name = "GitHub"
+    url = "https://github.com/brechtdv"
+    weight = 2
+[[menu.main]]
+    name = "LinkedIn"
+    url = "https://www.linkedin.com/in/nanxstats"
+    weight = 3
+[[menu.main]]
+    name = "Twitter"
+    url = "https://twitter.com/brechtdv"
+    weight = 4
+
