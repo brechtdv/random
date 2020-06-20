@@ -1,4 +1,5 @@
-baseurl = "/"
+baseURL = "https://brechtdv.github.io/random/"
+publishDir = "docs"
 title = "Random R Chunks"
 author = "Brecht Devleesschauwer"
 canonifyurls = true
