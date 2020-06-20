@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>highcharts on Random R Chunks</title>
-    <link>/tags/highcharts/</link>
+    <link>https://brechtdv.github.io/tags/highcharts/</link>
     <description>Recent content in highcharts on Random R Chunks</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sat, 20 Jun 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="/tags/highcharts/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://brechtdv.github.io/tags/highcharts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Highcharts</title>
-      <link>/post/highcharts/</link>
+      <link>https://brechtdv.github.io/highcharts/</link>
       <pubDate>Sat, 20 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>/post/highcharts/</guid>
+      <guid>https://brechtdv.github.io/highcharts/</guid>
       <description>TestTest</description>
     </item>
     
