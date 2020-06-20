@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Random R Chunks</title>
-    <link>https://brechtdv.github.io/</link>
+    <link>https://brechtdv.github.io/random/</link>
     <description>Recent content on Random R Chunks</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sat, 20 Jun 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://brechtdv.github.io/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://brechtdv.github.io/random/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Grouped stacked barplots with nested x axis in highcharter</title>
-      <link>https://brechtdv.github.io/post/grouped-stacked-barplots-with-nested-x-axis-in-highcharter/</link>
+      <link>https://brechtdv.github.io/random/post/grouped-stacked-barplots-with-nested-x-axis-in-highcharter/</link>
       <pubDate>Sat, 20 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://brechtdv.github.io/post/grouped-stacked-barplots-with-nested-x-axis-in-highcharter/</guid>
+      <guid>https://brechtdv.github.io/random/post/grouped-stacked-barplots-with-nested-x-axis-in-highcharter/</guid>
       <description>library(highcharter)## Registered S3 method overwritten by &amp;#39;quantmod&amp;#39;:## method from## as.zoo.data.frame zoo## Highcharts (www.highcharts.com) is a Highsoft software product which is## not free for commercial and Governmental usehello
 sessionInfo()## R version 4.0.0 (2020-04-24)## Platform: x86_64-w64-mingw32/x64 (64-bit)## Running under: Windows 10 x64 (build 18362)## ## Matrix products: default## ## locale:## [1] LC_COLLATE=English_Belgium.1252 LC_CTYPE=English_Belgium.1252 ## [3] LC_MONETARY=English_Belgium.1252 LC_NUMERIC=C ## [5] LC_TIME=English_Belgium.</description>
     </item>

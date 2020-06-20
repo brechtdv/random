@@ -2,12 +2,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on Random R Chunks</title>
-    <link>https://brechtdv.github.io/categories/</link>
+    <link>https://brechtdv.github.io/random/categories/</link>
     <description>Recent content in Categories on Random R Chunks</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     
-	<atom:link href="https://brechtdv.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://brechtdv.github.io/random/categories/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>
