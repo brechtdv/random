@@ -4,5 +4,8 @@
   },
   "about.qmd": {
     "about.html": "58ec64d9"
+  },
+  "posts/01-fitting-distributions/index.qmd": {
+    "index.html": "cdcdbd83"
   }
 }

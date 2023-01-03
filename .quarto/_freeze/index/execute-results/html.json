@@ -1,8 +1,10 @@
 {
-  "hash": "d6972bc0a16b51d03f0cd573f230f650",
+  "hash": "b2b3e0ada2b78737ef45d38b49f5931f",
   "result": {
     "markdown": "---\ntitle: \"random\"\n---\n\n\nThis is a Quarto website.\n\nTo learn more about Quarto websites visit <https://quarto.org/docs/websites>.\n\n\n::: {.cell}\n\n```{.r .cell-code}\n1 + 1\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n[1] 2\n```\n:::\n:::\n",
-    "supporting": [],
+    "supporting": [
+      "index_files"
+    ],
     "filters": [
       "rmarkdown/pagebreak.lua"
     ],
