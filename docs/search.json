@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Home",
     "section": "",
-    "text": "My Post\n\n\n\n\n\nPost description\n\n\n\n\n\n\nMay 22, 2021\n\n\nFizz McPhee\n\n\n\n\n\n\nNo matching items"
+    "text": "Fitting distributions\n\n\n\n\n\nSome useful functions to fit distributions to means, confidence intervals and standard errors\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -16,9 +16,9 @@
   {
     "objectID": "posts/01-fitting-distributions/index.html",
     "href": "posts/01-fitting-distributions/index.html",
-    "title": "My Post",
+    "title": "Fitting distributions",
     "section": "",
-    "text": "Here some text\ncode"
+    "text": "## function for fitting\nfit_beta <-\nfunction (par, p = 0.95) {\n  target <- par[2:3]\n  p <- c(0, p) + (1 - p)/2\n  f <-\n  function(x, mean, p, target) {\n    dev <- qbeta(p = p, shape1 = x, shape2 = x/mean - x)\n    return(sum((dev - target)^2))\n  }\n  shape1 <-\n    optimize(f, c(0, 1e4), mean = par[1], p = p, target = target)$minimum\n  shape2 <- shape1 / par[1] - shape1\n  return(list(shape1 = shape1, shape2 = shape2))\n}\n\n## function for simulating from fitted distribution\nsim_beta <-\n  function(n, ...) {\n    fit <- fit_beta(...)\n    return(rbeta(n, fit$shape1, fit$shape2))\n  }\n\n## disability weights for diarrhea\ndw_dia_mld <- c(0.074, 0.049, 0.104)\ndw_dia_mod <- c(0.188, 0.125, 0.264)\ndw_dia_sev <- c(0.247, 0.164, 0.348)\n\n## simulate from fitted Beta distribution\nn <- 1e5\nsim_dw_dia_mld <- sim_beta(n, dw_dia_mld)\nsim_dw_dia_mod <- sim_beta(n, dw_dia_mod)\nsim_dw_dia_sev <- sim_beta(n, dw_dia_sev)\n\n## compare fitted to observed values\nsummarize <-\n  function(x, probs = c(0.025, 0.975), ...) {\n    c(mean = mean(x, ...),\n      quantile(x, probs, ...))\n  }\n\nrbind(observed = dw_dia_mld, fitted = summarize(sim_dw_dia_mld))\n\n               mean      2.5%     97.5%\nobserved 0.07400000 0.0490000 0.1040000\nfitted   0.07404733 0.0487965 0.1038908\n\nrbind(observed = dw_dia_mod, fitted = summarize(sim_dw_dia_mod))\n\n              mean      2.5%     97.5%\nobserved 0.1880000 0.1250000 0.2640000\nfitted   0.1879728 0.1232797 0.2627209\n\nrbind(observed = dw_dia_sev, fitted = summarize(sim_dw_dia_sev))\n\n             mean      2.5%     97.5%\nobserved 0.247000 0.1640000 0.3480000\nfitted   0.246645 0.1597582 0.3448211\n\n## visualize random values\nboxplot(\n  las = 1,\n  ylab = \"Disability Weight\",\n  cbind(\"Mild\" = sim_dw_dia_mld,\n        \"Moderate\" = sim_dw_dia_mod,\n        \"Severe\" = sim_dw_dia_sev))"
   },
   {
     "objectID": "posts/01-fitting-distributions/index.html#heading",
@@ -26,5 +26,12 @@
     "title": "My Post",
     "section": "Heading",
     "text": "Heading\n\nsessionInfo()\n\nR version 4.2.1 (2022-06-23 ucrt)\nPlatform: x86_64-w64-mingw32/x64 (64-bit)\nRunning under: Windows 10 x64 (build 19044)\n\nMatrix products: default\n\nlocale:\n[1] LC_COLLATE=English_Belgium.utf8  LC_CTYPE=English_Belgium.utf8   \n[3] LC_MONETARY=English_Belgium.utf8 LC_NUMERIC=C                    \n[5] LC_TIME=English_Belgium.utf8    \n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nloaded via a namespace (and not attached):\n [1] digest_0.6.29     jsonlite_1.8.0    magrittr_2.0.3    evaluate_0.16    \n [5] rlang_1.0.6       stringi_1.7.8     cli_3.4.1         rstudioapi_0.14  \n [9] rmarkdown_2.16    tools_4.2.1       stringr_1.4.1     htmlwidgets_1.5.4\n[13] xfun_0.32         yaml_2.3.5        fastmap_1.1.0     compiler_4.2.1   \n[17] htmltools_0.5.3   knitr_1.40"
+  },
+  {
+    "objectID": "posts/01-fitting-distributions/index.html#gamma-distribution",
+    "href": "posts/01-fitting-distributions/index.html#gamma-distribution",
+    "title": "Fitting distributions",
+    "section": "Gamma distribution",
+    "text": "Gamma distribution\n\n## function for fitting\nfit_gamma <-\nfunction(q, p = 0.95) {\n  p <- c(0, p) + (1 - p)/2\n\n  f <-\n    function(x, p, target) {\n      dev <- qgamma(p = p, shape = x[1], rate = x[2])\n      return(sum((dev - target) ^ 2))\n    }\n\n  fit <- optim(par = c(1, 1), fn = f, p = p, target = q)\n\n  return(fit$par)\n}"
   }
 ]
