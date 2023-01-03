@@ -33,5 +33,19 @@
     "title": "Fitting distributions",
     "section": "Gamma distribution",
     "text": "Gamma distribution\n\n## function for fitting\nfit_gamma <-\nfunction(q, p = 0.95) {\n  p <- c(0, p) + (1 - p)/2\n\n  f <-\n    function(x, p, target) {\n      dev <- qgamma(p = p, shape = x[1], rate = x[2])\n      return(sum((dev - target) ^ 2))\n    }\n\n  fit <- optim(par = c(1, 1), fn = f, p = p, target = q)\n\n  return(fit$par)\n}"
+  },
+  {
+    "objectID": "posts/fitting-distributions/index.html",
+    "href": "posts/fitting-distributions/index.html",
+    "title": "Fitting distributions",
+    "section": "",
+    "text": "## function for fitting\nfit_beta <-\nfunction (par, p = 0.95) {\n  target <- par[2:3]\n  p <- c(0, p) + (1 - p)/2\n  f <-\n  function(x, mean, p, target) {\n    dev <- qbeta(p = p, shape1 = x, shape2 = x/mean - x)\n    return(sum((dev - target)^2))\n  }\n  shape1 <-\n    optimize(f, c(0, 1e4), mean = par[1], p = p, target = target)$minimum\n  shape2 <- shape1 / par[1] - shape1\n  return(list(shape1 = shape1, shape2 = shape2))\n}\n\n## function for simulating from fitted distribution\nsim_beta <-\n  function(n, ...) {\n    fit <- fit_beta(...)\n    return(rbeta(n, fit$shape1, fit$shape2))\n  }\n\n## disability weights for diarrhea\ndw_dia_mld <- c(0.074, 0.049, 0.104)\ndw_dia_mod <- c(0.188, 0.125, 0.264)\ndw_dia_sev <- c(0.247, 0.164, 0.348)\n\n## simulate from fitted Beta distribution\nn <- 1e5\nsim_dw_dia_mld <- sim_beta(n, dw_dia_mld)\nsim_dw_dia_mod <- sim_beta(n, dw_dia_mod)\nsim_dw_dia_sev <- sim_beta(n, dw_dia_sev)\n\n## compare fitted to observed values\nsummarize <-\n  function(x, probs = c(0.025, 0.975), ...) {\n    c(mean = mean(x, ...),\n      quantile(x, probs, ...))\n  }\n\nrbind(observed = dw_dia_mld, fitted = summarize(sim_dw_dia_mld))\n\n               mean       2.5%     97.5%\nobserved 0.07400000 0.04900000 0.1040000\nfitted   0.07403453 0.04881904 0.1040163\n\nrbind(observed = dw_dia_mod, fitted = summarize(sim_dw_dia_mod))\n\n              mean     2.5%     97.5%\nobserved 0.1880000 0.125000 0.2640000\nfitted   0.1880237 0.123059 0.2625791\n\nrbind(observed = dw_dia_sev, fitted = summarize(sim_dw_dia_sev))\n\n             mean      2.5%     97.5%\nobserved 0.247000 0.1640000 0.3480000\nfitted   0.246962 0.1603662 0.3455071\n\n## visualize random values\nboxplot(\n  las = 1,\n  ylab = \"Disability Weight\",\n  cbind(\"Mild\" = sim_dw_dia_mld,\n        \"Moderate\" = sim_dw_dia_mod,\n        \"Severe\" = sim_dw_dia_sev))"
+  },
+  {
+    "objectID": "posts/fitting-distributions/index.html#gamma-distribution",
+    "href": "posts/fitting-distributions/index.html#gamma-distribution",
+    "title": "Fitting distributions",
+    "section": "Gamma distribution",
+    "text": "Gamma distribution\n\n## function for fitting\nfit_gamma <-\nfunction(q, p = 0.95) {\n  p <- c(0, p) + (1 - p)/2\n\n  f <-\n    function(x, p, target) {\n      dev <- qgamma(p = p, shape = x[1], rate = x[2])\n      return(sum((dev - target) ^ 2))\n    }\n\n  fit <- optim(par = c(1, 1), fn = f, p = p, target = q)\n\n  return(fit$par)\n}"
   }
 ]
