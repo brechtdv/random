@@ -1,15 +1,20 @@
 ---
 title: "About"
-image: profile.jpg
+image: BrechtDevleesschauwer2019sq.jpg
 about:
   template: jolla
   links:
+    - icon: google
+      text: Google Scholar
+      href: https://scholar.google.com/citations?user=AFSxtd0AAAAJ
+    - icon: github
+      text: Github
+      href: https://github.com/brechtdv
     - icon: twitter
       text: Twitter
-      href: https://twitter.com
-    # (additional links excluded for brevity)
+      href: https://twitter.com/brechtdv
 ---
 
-## About this blog
+I am head of the Service [Health information](https://www.sciensano.be/en/about-sciensano/sciensanos-organogram/lifestyle-and-chronic-diseases) at Sciensano, the Belgian institute for health. I am also appointed as visiting professor in Risk Analysis at [Ghent University](https://biblio.ugent.be/person/002004180149). As a senior epidemiologist, I conduct policy-driven public health research in the domain of composite measures of population health and health inequalities. Currently, I am coordinating the [Belgian National Burden of Disease Study](https://www.sciensano.be/en/projects/belgian-national-burden-disease-study), and chairing the [European Burden of Disease Network (COST Action CA18218)](https://www.burden-eu.net/). As a member of the [World Health Organization Foodborne Disease Burden Epidemiology Reference Group (WHO/FERG)](https://www.who.int/groups/foodborne-disease-burden-epidemiology-reference-group-(ferg)), I am also contributing to the estimation of the global burden of foodborne disease. I have PhD degrees in Public Health and Veterinary Sciences, and MSc degrees in Biostatistics and Veterinary Medicine.
 
-This is the contents of the about page for my blog.
+My full cv is available via [brechtdv.github.io](https://brechtdv.github.io).
