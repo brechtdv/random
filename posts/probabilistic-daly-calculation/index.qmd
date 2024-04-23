@@ -1,0 +1,111 @@
+---
+title: "Probabilistic DALY calculation"
+description: "Some useful functions to fit distributions to means, confidence intervals and standard errors"
+date: "`r Sys.Date()`"
+draft: true
+---
+
+# Fit to a mean and confidence interval
+
+## Beta distribution
+
+```{r}
+## function for fitting
+fit_beta <-
+function (par, p = 0.95) {
+  target <- par[2:3]
+  p <- c(0, p) + (1 - p)/2
+  f <-
+  function(x, mean, p, target) {
+    dev <- qbeta(p = p, shape1 = x, shape2 = x/mean - x)
+    return(sum((dev - target)^2))
+  }
+  shape1 <-
+    optimize(f, c(0, 1e4), mean = par[1], p = p, target = target)$minimum
+  shape2 <- shape1 / par[1] - shape1
+  return(list(shape1 = shape1, shape2 = shape2))
+}
+
+## function for simulating from fitted distribution
+sim_beta <-
+  function(n, ...) {
+    fit <- fit_beta(...)
+    return(rbeta(n, fit$shape1, fit$shape2))
+  }
+
+## disability weights for diarrhea
+dw_dia_mld <- c(0.074, 0.049, 0.104)
+dw_dia_mod <- c(0.188, 0.125, 0.264)
+dw_dia_sev <- c(0.247, 0.164, 0.348)
+
+## simulate from fitted Beta distribution
+n <- 1e5
+sim_dw_dia_mld <- sim_beta(n, dw_dia_mld)
+sim_dw_dia_mod <- sim_beta(n, dw_dia_mod)
+sim_dw_dia_sev <- sim_beta(n, dw_dia_sev)
+
+## compare fitted to observed values
+summarize <-
+  function(x, probs = c(0.025, 0.975), ...) {
+    c(mean = mean(x, ...),
+      quantile(x, probs, ...))
+  }
+
+rbind(observed = dw_dia_mld, fitted = summarize(sim_dw_dia_mld))
+rbind(observed = dw_dia_mod, fitted = summarize(sim_dw_dia_mod))
+rbind(observed = dw_dia_sev, fitted = summarize(sim_dw_dia_sev))
+
+## visualize random values
+boxplot(
+  las = 1,
+  ylab = "Disability Weight",
+  cbind("Mild" = sim_dw_dia_mld,
+        "Moderate" = sim_dw_dia_mod,
+        "Severe" = sim_dw_dia_sev))
+```
+
+# Fit to a confidence interval
+
+## Gamma distribution
+
+```{r}
+## function for fitting
+fit_gamma <-
+function(q, p = 0.95) {
+  p <- c(0, p) + (1 - p)/2
+
+  f <-
+    function(x, p, target) {
+      dev <- qgamma(p = p, shape = x[1], rate = x[2])
+      return(sum((dev - target) ^ 2))
+    }
+
+  fit <- optim(par = c(1, 1), fn = f, p = p, target = q)
+
+  return(fit$par)
+}
+```
+
+# Simulate based on mean and SE
+
+```{r}
+## Gamma distribution
+rgamma2 <-
+function(n, m, s) {
+  rgamma(n, m^2/s^2, m/s^2)
+}
+
+## Beta distribution
+rbeta2 <-
+function(n, m, s) {
+  a <- m^2 * ((1 - m) / s^2 - 1 / m)
+  b <- (1/m - 1) * a
+  rbeta(n, a, b)
+}
+```
+
+# R session info
+
+```{r}
+sessionInfo()
+```

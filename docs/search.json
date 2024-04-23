@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Home",
     "section": "",
-    "text": "Fitting distributions\n\n\n\n\n\nSome useful functions to fit distributions to means, confidence intervals and standard errors\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\nNo matching items"
+    "text": "Fitting distributions\n\n\n\n\n\nSome useful functions to fit distributions to means, confidence intervals and standard errors\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\n  \n\n\n\n\nSIR model\n\n\n\n\n\nDifferent implementations of the basic SIR model\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -47,5 +47,124 @@
     "title": "Fitting distributions",
     "section": "Gamma distribution",
     "text": "Gamma distribution\n\n## function for fitting\nfit_gamma <-\nfunction(q, p = 0.95) {\n  p <- c(0, p) + (1 - p)/2\n\n  f <-\n    function(x, p, target) {\n      dev <- qgamma(p = p, shape = x[1], rate = x[2])\n      return(sum((dev - target) ^ 2))\n    }\n\n  fit <- optim(par = c(1, 1), fn = f, p = p, target = q)\n\n  return(fit$par)\n}"
+  },
+  {
+    "objectID": "posts/sir-model/index.html",
+    "href": "posts/sir-model/index.html",
+    "title": "SIR model",
+    "section": "",
+    "text": "The classical SIR model is a useful example to understand how disease transmission models are constructed. The SIR model defines three states — susceptible, infectious, and recovered, and assumes that the only possible transitions are from susceptible to infectious, and from infectious to recovered.\nHere we implement the SIR model using three different approaches, to show the similarities between these approaches."
+  },
+  {
+    "objectID": "posts/sir-model/index.html#parameter-values",
+    "href": "posts/sir-model/index.html#parameter-values",
+    "title": "SIR model",
+    "section": "Parameter values",
+    "text": "Parameter values\n\nN &lt;- 8900       # population size\nt &lt;- 20         # time steps\nbeta &lt;- 0.0004  # transmission probability\nalpha &lt;- 0.5    # recovery probability (corresponding to a duration of 1/0.5=2 time steps)"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#set-up-data-frame",
+    "href": "posts/sir-model/index.html#set-up-data-frame",
+    "title": "SIR model",
+    "section": "Set up data frame",
+    "text": "Set up data frame\n\npop &lt;-\n  data.frame(\n    DAY = seq(0, t),\n    S = numeric(t+1),\n    I = numeric(t+1),\n    R = numeric(t+1))\npop$S[1] &lt;- N - 1 # there needs to be 1 infectious person to start\npop$I[1] &lt;- 1\npop$R[1] &lt;- 0"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#run-model",
+    "href": "posts/sir-model/index.html#run-model",
+    "title": "SIR model",
+    "section": "Run model",
+    "text": "Run model\n\nfor (i in seq(t)) {\n  pop$S[i+1] &lt;-\n    pop$S[i] - pop$S[i] * (1 - (1 - beta)^pop$I[i])\n  pop$I[i+1] &lt;-\n    pop$I[i] + pop$S[i] * (1 - (1 - beta)^pop$I[i]) - pop$I[i] * alpha\n  pop$R[i+1] &lt;-\n    pop$R[i]                                        + pop$I[i] * alpha\n}"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#plot-results",
+    "href": "posts/sir-model/index.html#plot-results",
+    "title": "SIR model",
+    "section": "Plot results",
+    "text": "Plot results\n\nmatplot(\n  pop[, -1],\n  type = \"l\",\n  col = c(\"green\", \"red\", \"blue\"),\n  las = 1)"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#settings",
+    "href": "posts/sir-model/index.html#settings",
+    "title": "SIR model",
+    "section": "Settings",
+    "text": "Settings\n\n## load deSolve package\nlibrary(deSolve)\n\nWarning: package 'deSolve' was built under R version 4.2.2\n\n## create SIR function\nsir &lt;- function(time, state, parameters) {\n\n  with(as.list(c(state, parameters)), {\n\n    dS &lt;- -beta * S * I\n    dI &lt;-  beta * S * I - alpha * I\n    dR &lt;-                 alpha * I\n\n    return(list(c(dS, dI, dR)))\n  })\n}"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#initialisation",
+    "href": "posts/sir-model/index.html#initialisation",
+    "title": "SIR model",
+    "section": "Initialisation",
+    "text": "Initialisation\n\n## proportion in each compartment\ninit &lt;- c(S = 8699/8700, I = 1/8700, R = 0.0)\n\n## beta: infection parameter; alpha: recovery parameter\nparameters &lt;- c(beta = 1.5, alpha = 0.2)\n\n## time frame\ntimes &lt;- seq(0, 20, by = 0.1)"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#solve-using-ode-general-solver-for-ordinary-differential-equations",
+    "href": "posts/sir-model/index.html#solve-using-ode-general-solver-for-ordinary-differential-equations",
+    "title": "SIR model",
+    "section": "Solve using ode (General Solver for Ordinary Differential Equations)",
+    "text": "Solve using ode (General Solver for Ordinary Differential Equations)\n\nout &lt;- ode(y = init, times = times, func = sir, parms = parameters)"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#plot-results-1",
+    "href": "posts/sir-model/index.html#plot-results-1",
+    "title": "SIR model",
+    "section": "Plot results",
+    "text": "Plot results\n\n## change to data frame\nout &lt;- as.data.frame(out[, -1])\n\n## plot matrix\nmatplot(\n  x = times, y = out, type = \"l\", las = 1,\n  xlab = \"Time\", ylab = \"Proportion of population\", main = \"SIR Model\",\n  lwd = 1, lty = 1, bty = \"l\", col = c(\"green\", \"red\", \"blue\"))\n\n## add legend\nlegend(\n  \"topright\", c(\"Susceptible\", \"Infected\", \"Recovered\"),\n  pch = 1, col = c(\"green\", \"red\", \"blue\"))"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#parameter-values-1",
+    "href": "posts/sir-model/index.html#parameter-values-1",
+    "title": "SIR model",
+    "section": "Parameter values",
+    "text": "Parameter values\n\nN &lt;- 8900       # population size\nt &lt;- 20         # iterations\nbeta &lt;- 0.0004  # transmission probability\nalpha &lt;- 0.5    # recovery probability (corresponding to a duration of 1/0.5=2 time steps)"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#set-up-data-frame-1",
+    "href": "posts/sir-model/index.html#set-up-data-frame-1",
+    "title": "SIR model",
+    "section": "Set up data frame",
+    "text": "Set up data frame\n\npop &lt;- matrix(nrow = N, ncol = t+1)\npop[, 1] &lt;- c(\"I\", rep(\"S\", N-1))"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#run-model-1",
+    "href": "posts/sir-model/index.html#run-model-1",
+    "title": "SIR model",
+    "section": "Run model",
+    "text": "Run model\n\nfor (i in seq(t)) {\n  # identify S/I/R\n  is_S &lt;- pop[, i] == \"S\"\n  is_I &lt;- pop[, i] == \"I\"\n  is_R &lt;- pop[, i] == \"R\"\n\n  # calculate transition probability\n  beta_t &lt;- 1 - (1 - beta)^sum(is_I)\n  \n  # S may become I or stay S\n  pop[is_S, i+1] &lt;-\n    sample(\n      x = c(\"I\", \"S\"),\n      size = sum(is_S),\n      prob = c(beta_t, 1-beta_t),\n      replace = TRUE)\n  \n  # I may become R or stay I\n  pop[is_I, i+1] &lt;-\n    sample(\n      x = c(\"R\", \"I\"),\n      size = sum(is_I),\n      prob = c(alpha, 1-alpha),\n      replace = TRUE)\n  \n  # R stays R\n  pop[is_R, i+1] &lt;- pop[is_R, i]\n}"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#plot",
+    "href": "posts/sir-model/index.html#plot",
+    "title": "SIR model",
+    "section": "Plot",
+    "text": "Plot\n\npop_tab &lt;- apply(pop, 2, function(x) table(factor(x, c(\"S\", \"I\", \"R\"))))\nmatplot(\n  t(pop_tab),\n  type = \"l\",\n  col = c(\"green\", \"red\", \"blue\"),\n  las = 1)"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#parameter-values-2",
+    "href": "posts/sir-model/index.html#parameter-values-2",
+    "title": "SIR model",
+    "section": "Parameter values",
+    "text": "Parameter values\n\nN &lt;- 8900       # population size\nt &lt;- 20         # iterations\nbeta &lt;- 0.0004  # transmission probability\nalpha &lt;- 0.5    # recovery probability (corresponding to a duration of 1/0.5=2 time steps)"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#set-up-function",
+    "href": "posts/sir-model/index.html#set-up-function",
+    "title": "SIR model",
+    "section": "Set up function",
+    "text": "Set up function\n\nrun &lt;-\n  function() {\n    # set up population\n    pop &lt;- matrix(nrow = N, ncol = t+1)\n    pop[, 1] &lt;- c(\"I\", rep(\"S\", N-1))\n    \n    # run chains\n    for (i in seq(t)) {\n      # identify S/I/R\n      is_S &lt;- pop[, i] == \"S\"\n      is_I &lt;- pop[, i] == \"I\"\n      is_R &lt;- pop[, i] == \"R\"\n      \n      # calculate transition probability\n      beta_t &lt;- 1 - (1 - beta)^sum(is_I)\n      \n      # S may become I or stay S\n      pop[is_S, i+1] &lt;-\n        sample(\n          x = c(\"I\", \"S\"),\n          size = sum(is_S),\n          prob = c(beta_t, 1-beta_t),\n          replace = TRUE)\n      \n      # I may become R or stay I\n      pop[is_I, i+1] &lt;-\n        sample(\n          x = c(\"R\", \"I\"),\n          size = sum(is_I),\n          prob = c(alpha, 1-alpha),\n          replace = TRUE)\n      \n      # R stays R\n      pop[is_R, i+1] &lt;- pop[is_R, i]\n    }\n    \n    # summarize results\n    pop_tab &lt;-\n      t(apply(pop, 2, function(x) table(factor(x, c(\"S\", \"I\", \"R\")))))\n    \n    # return results\n    return(pop_tab)\n  }"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#run-model-2",
+    "href": "posts/sir-model/index.html#run-model-2",
+    "title": "SIR model",
+    "section": "Run model",
+    "text": "Run model\n\nruns &lt;- replicate(10, run())"
+  },
+  {
+    "objectID": "posts/sir-model/index.html#plot-1",
+    "href": "posts/sir-model/index.html#plot-1",
+    "title": "SIR model",
+    "section": "Plot",
+    "text": "Plot\n\nmatplot(\n  runs[, , 1],\n  type = \"l\",\n  col = c(\"green\", \"red\", \"blue\"),\n  las = 1)\nfor (i in seq(2, 10))\n  matplot(\n    runs[, , i],\n    type = \"l\",\n    col = c(\"green\", \"red\", \"blue\"),\n    las = 1,\n    add = TRUE)"
   }
 ]

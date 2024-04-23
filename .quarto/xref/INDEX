@@ -10,5 +10,11 @@
   },
   "posts/fitting-distributions/index.qmd": {
     "index.html": "fd3bdf1f"
+  },
+  "posts/sir-model/index.qmd": {
+    "index.html": "f00172b4"
+  },
+  "posts/probabilistic-daly-calculation/index.qmd": {
+    "index.html": "31d57094"
   }
 }
