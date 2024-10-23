@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Home",
     "section": "",
-    "text": "COnfounding\n\n\n\n\n\nIdentifying and addressing confounding in observational data\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\n  \n\n\n\n\nFitting distributions\n\n\n\n\n\nSome useful functions to fit distributions to means, confidence intervals and standard errors\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\n  \n\n\n\n\nSIR model\n\n\n\n\n\nDifferent implementations of the basic SIR model\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\nNo matching items"
+    "text": "Confounding\n\n\n\n\n\nIdentifying and addressing confounding in observational data\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\n  \n\n\n\n\nFitting distributions\n\n\n\n\n\nSome useful functions to fit distributions to means, confidence intervals and standard errors\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\n  \n\n\n\n\nSIR model\n\n\n\n\n\nDifferent implementations of the basic SIR model\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -170,29 +170,50 @@
   {
     "objectID": "posts/epi-confounding/index.html",
     "href": "posts/epi-confounding/index.html",
-    "title": "COnfounding",
+    "title": "Confounding",
     "section": "",
     "text": "To demonstrate confounding in the relationship between coffee consumption and cardiovascular disease (CVD), using tobacco as a confounder, we first generate a dummy dataset with three variables: coffee consumption, CVD status, and tobacco use. We will assume that tobacco use affects both coffee consumption and the likelihood of CVD.\n\n# Settings\nset.seed(123)  # for reproducibility\nn &lt;- 500       # number of iterations\n\n# Generate tobacco use (confounder)\ntobacco &lt;- rbinom(n, 1, 0.4)  # 40% smokers\n\n# Generate coffee consumption based on tobacco use (confounder effect)\n# Smokers are more likely to drink coffee\ncoffee &lt;- rbinom(n, 1, prob = 0.2 + 0.5 * tobacco)  \n\n# Generate CVD based on tobacco use and coffee consumption\n# Tobacco is a stronger predictor of CVD\nCVD &lt;- rbinom(n, 1, prob = 0.1 + 0.3 * tobacco + 0.05 * coffee)\n\n# Create the data frame\ndata &lt;- data.frame(coffee, tobacco, CVD)\n\n# Examine the first few rows of the dataset\nhead(data)\n\n  coffee tobacco CVD\n1      0       0   0\n2      1       1   1\n3      0       0   0\n4      1       1   1\n5      1       1   1\n6      0       0   0"
   },
   {
     "objectID": "posts/epi-confounding/index.html#scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping",
     "href": "posts/epi-confounding/index.html#scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping",
-    "title": "COnfounding",
+    "title": "Confounding",
     "section": "Scatterplot with Grouping (Exposure vs. Outcome with Confounder Grouping)",
     "text": "Scatterplot with Grouping (Exposure vs. Outcome with Confounder Grouping)\nA scatterplot or barplot that groups the data by the confounder (tobacco) can visually show the confounding effect. In this case, we can plot the relationship between coffee and CVD, with separate lines or bars for smokers and non-smokers.\n\nlibrary(ggplot2)\n\n# Create a bar plot showing CVD rate by coffee consumption, stratified by tobacco use\nggplot(data, aes(x = factor(coffee), fill = factor(CVD))) +\n  geom_bar(position = \"fill\") +\n  facet_wrap(~ tobacco, labeller = labeller(tobacco = c(\"0\" = \"Non-smokers\", \"1\" = \"Smokers\"))) +\n  labs(x = \"Coffee Consumption\", fill = \"CVD Status\", y = \"Proportion\") +\n  scale_fill_manual(values = c(\"0\" = \"lightblue\", \"1\" = \"red\")) +\n  ggtitle(\"CVD Proportion by Coffee Consumption (Stratified by Tobacco Use)\")\n\n\n\n\nThis plot shows how the relationship between coffee and CVD changes when stratified by tobacco use. If there is confounding, the relationship between coffee and CVD should look different for smokers and non-smokers."
   },
   {
     "objectID": "posts/epi-confounding/index.html#mosaic-plot-cvd-by-coffee-and-tobacco",
     "href": "posts/epi-confounding/index.html#mosaic-plot-cvd-by-coffee-and-tobacco",
-    "title": "COnfounding",
+    "title": "Confounding",
     "section": "Mosaic Plot (CVD by Coffee and Tobacco)",
     "text": "Mosaic Plot (CVD by Coffee and Tobacco)\nA mosaic plot helps visualize the relationship between two categorical variables (coffee and CVD) while considering a third categorical variable (tobacco). It is a good way to see if the distribution of CVD cases changes with tobacco use.\n\n# Create a mosaic plot to visualize the relationship between coffee, tobacco, and CVD\nmosaicplot(~ coffee + CVD + tobacco, data = data, color = TRUE,\n           main = \"Mosaic Plot of Coffee, CVD, and Tobacco\",\n           xlab = \"Coffee Consumption\", ylab = \"CVD Status\")\n\n\n\n\nThis mosaic plot helps identify if tobacco modifies the association between coffee and CVD. You can see if the size and color pattern of the boxes vary between smokers and non-smokers."
   },
   {
     "objectID": "posts/epi-confounding/index.html#interaction-plot-coffee-cvd-and-tobacco",
     "href": "posts/epi-confounding/index.html#interaction-plot-coffee-cvd-and-tobacco",
-    "title": "COnfounding",
+    "title": "Confounding",
     "section": "Interaction Plot (Coffee, CVD, and Tobacco)",
     "text": "Interaction Plot (Coffee, CVD, and Tobacco)\nAn interaction plot can help visually assess whether there is an interaction effect between coffee consumption and tobacco use on the likelihood of CVD. It shows the predicted probabilities or the mean CVD rate across different groups.\n\n# Calculate mean CVD rate by coffee and tobacco groups\nmean_cvd &lt;- aggregate(CVD ~ coffee + tobacco, data = data, FUN = mean)\n\n# Interaction plot\nggplot(mean_cvd, aes(x = factor(coffee), y = CVD, color = factor(tobacco), group = tobacco)) +\n  geom_line(linewidth = 1.2) +\n  geom_point(linewidth = 3) +\n  labs(x = \"Coffee Consumption\", y = \"Mean CVD Rate\", color = \"Tobacco Use\") +\n  ggtitle(\"Interaction Plot: Coffee Consumption, Tobacco, and Mean CVD Rate\")\n\nWarning in geom_point(linewidth = 3): Ignoring unknown parameters: `linewidth`\n\n\n\n\n\nThis plot illustrates how the relationship between coffee consumption and CVD varies by tobacco use. If tobacco is a confounder, the slopes for smokers and non-smokers should differ, suggesting that the effect of coffee on CVD is not the same for both groups."
+  },
+  {
+    "objectID": "posts/epi-confounding/index.html#stratification-by-tobacco-use",
+    "href": "posts/epi-confounding/index.html#stratification-by-tobacco-use",
+    "title": "Confounding",
+    "section": "Stratification by tobacco use",
+    "text": "Stratification by tobacco use\nWe can stratify the analysis by tobacco use to compare the effect of coffee on CVD within each group (smokers and non-smokers).\n\n# Stratified analysis for non-smokers\nnon_smokers &lt;- subset(data, tobacco == 0)\nstrat_model_ns &lt;- glm(CVD ~ coffee, data = non_smokers, family = \"binomial\")\nsummary(strat_model_ns)\n\n\nCall:\nglm(formula = CVD ~ coffee, family = \"binomial\", data = non_smokers)\n\nCoefficients:\n            Estimate Std. Error z value Pr(&gt;|z|)    \n(Intercept)  -2.2889     0.2237 -10.230   &lt;2e-16 ***\ncoffee        0.3079     0.4385   0.702    0.483    \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 196.09  on 304  degrees of freedom\nResidual deviance: 195.62  on 303  degrees of freedom\nAIC: 199.62\n\nNumber of Fisher Scoring iterations: 5\n\n# Stratified analysis for smokers\nsmokers &lt;- subset(data, tobacco == 1)\nstrat_model_sm &lt;- glm(CVD ~ coffee, data = smokers, family = \"binomial\")\nsummary(strat_model_sm)\n\n\nCall:\nglm(formula = CVD ~ coffee, family = \"binomial\", data = smokers)\n\nCoefficients:\n            Estimate Std. Error z value Pr(&gt;|z|)  \n(Intercept)  -0.6419     0.2763  -2.323   0.0202 *\ncoffee        0.5103     0.3250   1.570   0.1164  \n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 266.58  on 194  degrees of freedom\nResidual deviance: 264.06  on 193  degrees of freedom\nAIC: 268.06\n\nNumber of Fisher Scoring iterations: 4"
+  },
+  {
+    "objectID": "posts/epi-confounding/index.html#regression-adjustment",
+    "href": "posts/epi-confounding/index.html#regression-adjustment",
+    "title": "Confounding",
+    "section": "Regression adjustment",
+    "text": "Regression adjustment\nAs done earlier, logistic regression models can adjust for tobacco use. This method is often more convenient than stratification.\n\n# The adjusted model shown earlier adjusts for tobacco use\nsummary(adjusted_model)\n\n\nCall:\nglm(formula = CVD ~ coffee + tobacco, family = \"binomial\", data = data)\n\nCoefficients:\n            Estimate Std. Error z value Pr(&gt;|z|)    \n(Intercept)  -2.3239     0.2057 -11.298  &lt; 2e-16 ***\ncoffee        0.4377     0.2582   1.696     0.09 .  \ntobacco       1.7344     0.2666   6.507 7.68e-11 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 536.85  on 499  degrees of freedom\nResidual deviance: 459.82  on 497  degrees of freedom\nAIC: 465.82\n\nNumber of Fisher Scoring iterations: 4"
+  },
+  {
+    "objectID": "posts/epi-confounding/index.html#g-computation",
+    "href": "posts/epi-confounding/index.html#g-computation",
+    "title": "Confounding",
+    "section": "G-computation",
+    "text": "G-computation\nG-computation (or the G-formula) is a causal inference method derived from the counterfactual framework, often used to estimate the causal effect of an exposure on an outcome, adjusting for confounders. G-computation models the outcome (e.g., cardiovascular disease, CVD) under different hypothetical scenarios of the exposure (e.g., coffee consumption) and then averages these over the distribution of confounders (e.g., tobacco use).\nThe G-formula provides a direct way to adjust for confounding by estimating the expected outcome for both treated and untreated groups if everyone in the population had the same level of exposure, regardless of their actual exposure.\nSteps for G-Computation:\n\nFit an outcome model: Model the relationship between the confounder (tobacco), the exposure (coffee), and the outcome (CVD).\nPredict counterfactual outcomes: Use the model to predict the probability of CVD for everyone in the dataset assuming two different scenarios:\n\nEveryone drank coffee (coffee = 1).\nNo one drank coffee (coffee = 0).\n\nEstimate the causal effect: Compare the average predicted outcomes under the two scenarios to estimate the causal effect of coffee consumption on CVD.\n\n\n# Fit a logistic regression model for the outcome\noutcome_model &lt;- glm(CVD ~ coffee + tobacco, data = data, family = binomial)\nsummary(outcome_model)\n\n\nCall:\nglm(formula = CVD ~ coffee + tobacco, family = binomial, data = data)\n\nCoefficients:\n            Estimate Std. Error z value Pr(&gt;|z|)    \n(Intercept)  -2.3239     0.2057 -11.298  &lt; 2e-16 ***\ncoffee        0.4377     0.2582   1.696     0.09 .  \ntobacco       1.7344     0.2666   6.507 7.68e-11 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\n(Dispersion parameter for binomial family taken to be 1)\n\n    Null deviance: 536.85  on 499  degrees of freedom\nResidual deviance: 459.82  on 497  degrees of freedom\nAIC: 465.82\n\nNumber of Fisher Scoring iterations: 4\n\n# Create a copy of the data with coffee set to 1 (everyone drinks coffee)\ndata_coffee1 &lt;- data\ndata_coffee1$coffee &lt;- 1\n\n# Predict the probability of CVD for everyone if all drank coffee\npred_coffee1 &lt;- predict(outcome_model, newdata = data_coffee1, type = \"response\")\n\n# Create a copy of the data with coffee set to 0 (no one drinks coffee)\ndata_coffee0 &lt;- data\ndata_coffee0$coffee &lt;- 0\n\n# Predict the probability of CVD for everyone if no one drank coffee\npred_coffee0 &lt;- predict(outcome_model, newdata = data_coffee0, type = \"response\")\n\n# Calculate the mean predicted probability of CVD under both scenarios\nmean_pred_coffee1 &lt;- mean(pred_coffee1)\nmean_pred_coffee0 &lt;- mean(pred_coffee0)\n\n# Calculate the average causal effect (risk difference)\ncausal_effect &lt;- mean_pred_coffee1 - mean_pred_coffee0\ncausal_effect\n\n[1] 0.06703175"
   }
 ]

@@ -1,5 +1,5 @@
 ---
-title: "COnfounding"
+title: "Confounding"
 description: "Identifying and addressing confounding in observational data"
 date: "`r Sys.Date()`"
 ---
@@ -107,6 +107,77 @@ summary(adjusted_model)
 ```
 
 By comparing the coefficients in both models, we can observe the confounding effect of tobacco on the coffee-CVD relationship.
+
+# Approaches to Handle Confounding
+
+## Stratification by tobacco use
+
+We can stratify the analysis by tobacco use to compare the effect of coffee on CVD within each group (smokers and non-smokers).
+
+```{r}
+# Stratified analysis for non-smokers
+non_smokers <- subset(data, tobacco == 0)
+strat_model_ns <- glm(CVD ~ coffee, data = non_smokers, family = "binomial")
+summary(strat_model_ns)
+
+# Stratified analysis for smokers
+smokers <- subset(data, tobacco == 1)
+strat_model_sm <- glm(CVD ~ coffee, data = smokers, family = "binomial")
+summary(strat_model_sm)
+```
+
+## Regression adjustment
+
+As done earlier, logistic regression models can adjust for tobacco use. This method is often more convenient than stratification.
+
+```{r}
+# The adjusted model shown earlier adjusts for tobacco use
+summary(adjusted_model)
+```
+
+## G-computation
+
+G-computation (or the G-formula) is a causal inference method derived from the counterfactual framework, often used to estimate the causal effect of an exposure on an outcome, adjusting for confounders. G-computation models the outcome (e.g., cardiovascular disease, CVD) under different hypothetical scenarios of the exposure (e.g., coffee consumption) and then averages these over the distribution of confounders (e.g., tobacco use).
+
+The G-formula provides a direct way to adjust for confounding by estimating the expected outcome for both treated and untreated groups if everyone in the population had the same level of exposure, regardless of their actual exposure. 
+
+Steps for G-Computation:
+
+- Fit an outcome model: Model the relationship between the confounder (tobacco), the exposure (coffee), and the outcome (CVD).
+- Predict counterfactual outcomes: Use the model to predict the probability of CVD for everyone in the dataset assuming two different scenarios:
+  - Everyone drank coffee (`coffee = 1`).
+  - No one drank coffee (`coffee = 0`).
+- Estimate the causal effect: Compare the average predicted outcomes under the two scenarios to estimate the causal effect of coffee consumption on CVD.
+
+```{r}
+# Fit a logistic regression model for the outcome
+outcome_model <- glm(CVD ~ coffee + tobacco, data = data, family = binomial)
+summary(outcome_model)
+
+# Create a copy of the data with coffee set to 1 (everyone drinks coffee)
+data_coffee1 <- data
+data_coffee1$coffee <- 1
+
+# Predict the probability of CVD for everyone if all drank coffee
+pred_coffee1 <- predict(outcome_model, newdata = data_coffee1, type = "response")
+
+# Create a copy of the data with coffee set to 0 (no one drinks coffee)
+data_coffee0 <- data
+data_coffee0$coffee <- 0
+
+# Predict the probability of CVD for everyone if no one drank coffee
+pred_coffee0 <- predict(outcome_model, newdata = data_coffee0, type = "response")
+
+# Calculate the mean predicted probability of CVD under both scenarios
+mean_pred_coffee1 <- mean(pred_coffee1)
+mean_pred_coffee0 <- mean(pred_coffee0)
+
+# Calculate the average causal effect (risk difference)
+causal_effect <- mean_pred_coffee1 - mean_pred_coffee0
+causal_effect
+
+```
+
 
 # R session info
 

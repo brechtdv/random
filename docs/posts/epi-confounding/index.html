@@ -9,7 +9,7 @@
 <meta name="dcterms.date" content="2024-10-23">
 <meta name="description" content="Identifying and addressing confounding in observational data">
 
-<title>random - COnfounding</title>
+<title>random - Confounding</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -148,6 +148,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#interaction-plot-coffee-cvd-and-tobacco" id="toc-interaction-plot-coffee-cvd-and-tobacco" class="nav-link" data-scroll-target="#interaction-plot-coffee-cvd-and-tobacco">Interaction Plot (Coffee, CVD, and Tobacco)</a></li>
   </ul></li>
   <li><a href="#model-based-identification-of-confounding" id="toc-model-based-identification-of-confounding" class="nav-link" data-scroll-target="#model-based-identification-of-confounding">Model-based identification of confounding</a></li>
+  <li><a href="#approaches-to-handle-confounding" id="toc-approaches-to-handle-confounding" class="nav-link" data-scroll-target="#approaches-to-handle-confounding">Approaches to Handle Confounding</a>
+  <ul class="collapse">
+  <li><a href="#stratification-by-tobacco-use" id="toc-stratification-by-tobacco-use" class="nav-link" data-scroll-target="#stratification-by-tobacco-use">Stratification by tobacco use</a></li>
+  <li><a href="#regression-adjustment" id="toc-regression-adjustment" class="nav-link" data-scroll-target="#regression-adjustment">Regression adjustment</a></li>
+  <li><a href="#g-computation" id="toc-g-computation" class="nav-link" data-scroll-target="#g-computation">G-computation</a></li>
+  </ul></li>
   <li><a href="#r-session-info" id="toc-r-session-info" class="nav-link" data-scroll-target="#r-session-info">R session info</a></li>
   </ul>
 </nav>
@@ -157,7 +163,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">COnfounding</h1>
+<h1 class="title">Confounding</h1>
 </div>
 
 <div>
@@ -336,10 +342,161 @@ Number of Fisher Scoring iterations: 4</code></pre>
 </div>
 <p>By comparing the coefficients in both models, we can observe the confounding effect of tobacco on the coffee-CVD relationship.</p>
 </section>
+<section id="approaches-to-handle-confounding" class="level1">
+<h1>Approaches to Handle Confounding</h1>
+<section id="stratification-by-tobacco-use" class="level2">
+<h2 class="anchored" data-anchor-id="stratification-by-tobacco-use">Stratification by tobacco use</h2>
+<p>We can stratify the analysis by tobacco use to compare the effect of coffee on CVD within each group (smokers and non-smokers).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stratified analysis for non-smokers</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>non_smokers <span class="ot">&lt;-</span> <span class="fu">subset</span>(data, tobacco <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>strat_model_ns <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee, <span class="at">data =</span> non_smokers, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(strat_model_ns)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = CVD ~ coffee, family = "binomial", data = non_smokers)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  -2.2889     0.2237 -10.230   &lt;2e-16 ***
+coffee        0.3079     0.4385   0.702    0.483    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 196.09  on 304  degrees of freedom
+Residual deviance: 195.62  on 303  degrees of freedom
+AIC: 199.62
+
+Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stratified analysis for smokers</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>smokers <span class="ot">&lt;-</span> <span class="fu">subset</span>(data, tobacco <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>strat_model_sm <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee, <span class="at">data =</span> smokers, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(strat_model_sm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = CVD ~ coffee, family = "binomial", data = smokers)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)  
+(Intercept)  -0.6419     0.2763  -2.323   0.0202 *
+coffee        0.5103     0.3250   1.570   0.1164  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 266.58  on 194  degrees of freedom
+Residual deviance: 264.06  on 193  degrees of freedom
+AIC: 268.06
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+</section>
+<section id="regression-adjustment" class="level2">
+<h2 class="anchored" data-anchor-id="regression-adjustment">Regression adjustment</h2>
+<p>As done earlier, logistic regression models can adjust for tobacco use. This method is often more convenient than stratification.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The adjusted model shown earlier adjusts for tobacco use</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adjusted_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = CVD ~ coffee + tobacco, family = "binomial", data = data)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  -2.3239     0.2057 -11.298  &lt; 2e-16 ***
+coffee        0.4377     0.2582   1.696     0.09 .  
+tobacco       1.7344     0.2666   6.507 7.68e-11 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 536.85  on 499  degrees of freedom
+Residual deviance: 459.82  on 497  degrees of freedom
+AIC: 465.82
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+</div>
+</section>
+<section id="g-computation" class="level2">
+<h2 class="anchored" data-anchor-id="g-computation">G-computation</h2>
+<p>G-computation (or the G-formula) is a causal inference method derived from the counterfactual framework, often used to estimate the causal effect of an exposure on an outcome, adjusting for confounders. G-computation models the outcome (e.g., cardiovascular disease, CVD) under different hypothetical scenarios of the exposure (e.g., coffee consumption) and then averages these over the distribution of confounders (e.g., tobacco use).</p>
+<p>The G-formula provides a direct way to adjust for confounding by estimating the expected outcome for both treated and untreated groups if everyone in the population had the same level of exposure, regardless of their actual exposure.</p>
+<p>Steps for G-Computation:</p>
+<ul>
+<li>Fit an outcome model: Model the relationship between the confounder (tobacco), the exposure (coffee), and the outcome (CVD).</li>
+<li>Predict counterfactual outcomes: Use the model to predict the probability of CVD for everyone in the dataset assuming two different scenarios:
+<ul>
+<li>Everyone drank coffee (coffee = 1).</li>
+<li>No one drank coffee (coffee = 0).</li>
+</ul></li>
+<li>Estimate the causal effect: Compare the average predicted outcomes under the two scenarios to estimate the causal effect of coffee consumption on CVD.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a logistic regression model for the outcome</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>outcome_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">family =</span> binomial)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(outcome_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = CVD ~ coffee + tobacco, family = binomial, data = data)
+
+Coefficients:
+            Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)  -2.3239     0.2057 -11.298  &lt; 2e-16 ***
+coffee        0.4377     0.2582   1.696     0.09 .  
+tobacco       1.7344     0.2666   6.507 7.68e-11 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 536.85  on 499  degrees of freedom
+Residual deviance: 459.82  on 497  degrees of freedom
+AIC: 465.82
+
+Number of Fisher Scoring iterations: 4</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 1 (everyone drinks coffee)</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>data_coffee1 <span class="ot">&lt;-</span> data</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>data_coffee1<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if all drank coffee</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee1, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 0 (no one drinks coffee)</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>data_coffee0 <span class="ot">&lt;-</span> data</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>data_coffee0<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if no one drank coffee</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee0, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the mean predicted probability of CVD under both scenarios</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee1)</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee0)</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the average causal effect (risk difference)</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>causal_effect <span class="ot">&lt;-</span> mean_pred_coffee1 <span class="sc">-</span> mean_pred_coffee0</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>causal_effect</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.06703175</code></pre>
+</div>
+</div>
+</section>
+</section>
 <section id="r-session-info" class="level1">
 <h1>R session info</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.4.1 (2024-06-14 ucrt)
 Platform: x86_64-w64-mingw32/x64
