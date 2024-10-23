@@ -423,13 +423,78 @@ AIC: 268.06
 Number of Fisher Scoring iterations: 4</code></pre>
 </div>
 </div>
+<p>Based on the stratified results, we can calculate the pooled Mantel-Haenszel odds ratio.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load required package</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: survival</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Package epiR 2.0.76 is loaded</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Type help(epi.about) for summary information</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Type browseVignettes(package = 'epiR') to learn how to use epiR for applied epidemiological analyses</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine tobacco as a stratifying variable in a 2x2x2 table format</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>mantel_haenszel_table <span class="ot">&lt;-</span> <span class="fu">table</span>(data<span class="sc">$</span>coffee, data<span class="sc">$</span>CVD, data<span class="sc">$</span>tobacco)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>mantel_haenszel_table</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, ,  = 0
+
+   
+      0   1
+  0 217  22
+  1  58   8
+
+, ,  = 1
+
+   
+      0   1
+  0  38  20
+  1  73  64</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply Mantel-Haenszel Odds Ratio (MH OR)</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">epi.2by2</span>(mantel_haenszel_table, <span class="at">method =</span> <span class="st">"cross.sectional"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Outcome +    Outcome -      Total               Prev risk *
+Exposed +          255           42        297    85.86 (81.37 to 89.61)
+Exposed -          131           72        203    64.53 (57.53 to 71.10)
+Total              386          114        500    77.20 (73.27 to 80.81)
+
+Point estimates and 95% CIs:
+-------------------------------------------------------------------
+Prev risk ratio (crude)                        1.33 (1.19, 1.49)
+Prev risk ratio (M-H)                          1.10 (0.99, 1.22)
+Prev risk ratio (crude:M-H)                    1.21
+Prev odds ratio (crude)                        3.34 (2.16, 5.16)
+Prev odds ratio (M-H)                          1.56 (0.94, 2.59)
+Prev odds ratio (crude:M-H)                    2.14
+Attrib prev in the exposed (crude) *           21.33 (13.64, 29.01)
+Attrib prev in the exposed (M-H) *             7.02 (-5.41, 19.45)
+Attrib prev (crude:M-H)                        3.04
+-------------------------------------------------------------------
+ Woolf test of homogeneity of PRs: chi2(1) = 1.684 Pr&gt;chi2 = 0.194
+ Woolf test of homogeneity of ORs: chi2(1) = 0.089 Pr&gt;chi2 = 0.766
+ Test that M-H adjusted OR = 1:  chi2(1) = 2.879 Pr&gt;chi2 = 0.045
+ Wald confidence limits
+ M-H: Mantel-Haenszel; CI: confidence interval
+ * Outcomes per 100 population units </code></pre>
+</div>
+</div>
 </section>
 <section id="regression-adjustment" class="level2">
 <h2 class="anchored" data-anchor-id="regression-adjustment">Regression adjustment</h2>
 <p>As done earlier, logistic regression models can adjust for tobacco use. This method is often more convenient than stratification.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The adjusted model shown earlier adjusts for tobacco use</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adjusted_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The adjusted model shown earlier adjusts for tobacco use</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adjusted_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -451,7 +516,21 @@ AIC: 465.82
 
 Number of Fisher Scoring iterations: 4</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Odds ratio based on the adjusted model</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">OR =</span> <span class="fu">exp</span>(<span class="fu">coef</span>(adjusted_model)),</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp</span>(<span class="fu">confint</span>(adjusted_model)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Waiting for profiling to be done...</code></pre>
 </div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                    OR      2.5 %    97.5 %
+(Intercept) 0.09788812 0.06405821 0.1438391
+coffee      1.54916632 0.93204191 2.5696811
+tobacco     5.66535568 3.39174231 9.6687771</code></pre>
+</div>
+</div>
+<p>Note how the adjusted OR for coffee consumption is similar to the Mantel-Haenszel corrected OR.</p>
 </section>
 <section id="g-computation" class="level2">
 <h2 class="anchored" data-anchor-id="g-computation">G-computation</h2>
@@ -468,9 +547,9 @@ Number of Fisher Scoring iterations: 4</code></pre>
 <li>Estimate the causal effect: Compare the average predicted outcomes under the two scenarios to estimate the causal effect of coffee consumption on CVD.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a logistic regression model for the outcome</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>outcome_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">family =</span> binomial)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(outcome_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a logistic regression model for the outcome</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>outcome_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">family =</span> binomial)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(outcome_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -492,27 +571,27 @@ AIC: 465.82
 
 Number of Fisher Scoring iterations: 4</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 1 (everyone drinks coffee)</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>data_coffee1 <span class="ot">&lt;-</span> data</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>data_coffee1<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if all drank coffee</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee1, <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 0 (no one drinks coffee)</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>data_coffee0 <span class="ot">&lt;-</span> data</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>data_coffee0<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if no one drank coffee</span></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee0, <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the mean predicted probability of CVD under both scenarios</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee1)</span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee0)</span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the average causal effect (risk difference)</span></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>causal_effect <span class="ot">&lt;-</span> mean_pred_coffee1 <span class="sc">-</span> mean_pred_coffee0</span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>causal_effect</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 1 (everyone drinks coffee)</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>data_coffee1 <span class="ot">&lt;-</span> data</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>data_coffee1<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if all drank coffee</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee1, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 0 (no one drinks coffee)</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>data_coffee0 <span class="ot">&lt;-</span> data</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>data_coffee0<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if no one drank coffee</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee0, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the mean predicted probability of CVD under both scenarios</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee1)</span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee0)</span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the average causal effect (risk difference)</span></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>causal_effect <span class="ot">&lt;-</span> mean_pred_coffee1 <span class="sc">-</span> mean_pred_coffee0</span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>causal_effect</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.06703175</code></pre>
 </div>
@@ -522,7 +601,7 @@ Number of Fisher Scoring iterations: 4</code></pre>
 <section id="r-session-info" class="level1">
 <h1>R session info</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.4.1 (2024-06-14 ucrt)
 Platform: x86_64-w64-mingw32/x64
@@ -543,20 +622,37 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ggcorrplot_0.1.4.1 ggplot2_3.5.1     
+[1] epiR_2.0.76        survival_3.6-4     ggcorrplot_0.1.4.1 ggplot2_3.5.1     
 
 loaded via a namespace (and not attached):
- [1] vctrs_0.6.5       cli_3.6.3         knitr_1.48        rlang_1.1.4      
- [5] xfun_0.45         stringi_1.8.4     generics_0.1.3    jsonlite_1.8.8   
- [9] labeling_0.4.3    glue_1.7.0        colorspace_2.1-0  plyr_1.8.9       
-[13] htmltools_0.5.8.1 scales_1.3.0      fansi_1.0.6       rmarkdown_2.27   
-[17] grid_4.4.1        evaluate_0.24.0   munsell_0.5.1     tibble_3.2.1     
-[21] fastmap_1.2.0     reshape2_1.4.4    yaml_2.3.9        lifecycle_1.0.4  
-[25] stringr_1.5.1     compiler_4.4.1    dplyr_1.1.4       Rcpp_1.0.12      
-[29] htmlwidgets_1.6.4 pkgconfig_2.0.3   rstudioapi_0.16.0 farver_2.1.2     
-[33] digest_0.6.36     R6_2.5.1          tidyselect_1.2.1  utf8_1.2.4       
-[37] pillar_1.9.0      magrittr_2.0.3    withr_3.0.0       tools_4.4.1      
-[41] gtable_0.3.5     </code></pre>
+ [1] gtable_0.3.5            xfun_0.45               htmlwidgets_1.6.4      
+ [4] lattice_0.22-6          vctrs_0.6.5             tools_4.4.1            
+ [7] generics_0.1.3          curl_5.2.1              tibble_3.2.1           
+[10] proxy_0.4-27            fansi_1.0.6             pkgconfig_2.0.3        
+[13] Matrix_1.7-0            KernSmooth_2.23-24      data.table_1.15.4      
+[16] uuid_1.2-0              lifecycle_1.0.4         flextable_0.9.6        
+[19] compiler_4.4.1          farver_2.1.2            stringr_1.5.1          
+[22] textshaping_0.4.0       munsell_0.5.1           httpuv_1.6.15          
+[25] fontquiver_0.2.1        fontLiberation_0.1.0    htmltools_0.5.8.1      
+[28] class_7.3-22            yaml_2.3.9              later_1.3.2            
+[31] pillar_1.9.0            crayon_1.5.3            gfonts_0.2.0           
+[34] openssl_2.2.0           classInt_0.4-10         BiasedUrn_2.0.12       
+[37] mime_0.12               fontBitstreamVera_0.1.1 zip_2.3.1              
+[40] tidyselect_1.2.1        digest_0.6.36           stringi_1.8.4          
+[43] sf_1.0-16               dplyr_1.1.4             reshape2_1.4.4         
+[46] pander_0.6.5            labeling_0.4.3          splines_4.4.1          
+[49] fastmap_1.2.0           grid_4.4.1              colorspace_2.1-0       
+[52] cli_3.6.3               magrittr_2.0.3          crul_1.5.0             
+[55] utf8_1.2.4              e1071_1.7-14            withr_3.0.0            
+[58] promises_1.3.0          gdtools_0.3.7           scales_1.3.0           
+[61] lubridate_1.9.3         timechange_0.3.0        officer_0.6.6          
+[64] rmarkdown_2.27          ragg_1.3.2              askpass_1.2.0          
+[67] zoo_1.8-12              shiny_1.8.1.1           evaluate_0.24.0        
+[70] knitr_1.48              rlang_1.1.4             Rcpp_1.0.12            
+[73] xtable_1.8-4            glue_1.7.0              DBI_1.2.3              
+[76] httpcode_0.3.0          xml2_1.3.6              rstudioapi_0.16.0      
+[79] jsonlite_1.8.8          R6_2.5.1                plyr_1.8.9             
+[82] systemfonts_1.1.0       units_0.8-5            </code></pre>
 </div>
 </div>
 
