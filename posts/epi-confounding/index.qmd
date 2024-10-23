@@ -145,6 +145,20 @@ smokers <- subset(data, tobacco == 1)
 strat_model_sm <- glm(CVD ~ coffee, data = smokers, family = "binomial")
 summary(strat_model_sm)
 ```
+Based on the stratified results, we can calculate the pooled Mantel-Haenszel odds ratio.
+
+```{r}
+# Load required package
+library(epiR)
+
+# Combine tobacco as a stratifying variable in a 2x2x2 table format
+mantel_haenszel_table <- table(data$coffee, data$CVD, data$tobacco)
+mantel_haenszel_table
+
+# Apply Mantel-Haenszel Odds Ratio (MH OR)
+epi.2by2(mantel_haenszel_table, method = "cross.sectional")
+```
+
 
 ## Regression adjustment
 
@@ -153,7 +167,13 @@ As done earlier, logistic regression models can adjust for tobacco use. This met
 ```{r}
 # The adjusted model shown earlier adjusts for tobacco use
 summary(adjusted_model)
+
+# Odds ratio based on the adjusted model
+cbind(
+  OR = exp(coef(adjusted_model)),
+  exp(confint(adjusted_model)))
 ```
+Note how the adjusted OR for coffee consumption is similar to the Mantel-Haenszel corrected OR. 
 
 ## G-computation
 
