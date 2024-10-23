@@ -145,7 +145,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#correlation-heatmap" id="toc-correlation-heatmap" class="nav-link" data-scroll-target="#correlation-heatmap">Correlation heatmap</a></li>
   <li><a href="#scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping" id="toc-scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping" class="nav-link" data-scroll-target="#scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping">Scatterplot with Grouping (Exposure vs.&nbsp;Outcome with Confounder Grouping)</a></li>
-  <li><a href="#mosaic-plot-cvd-by-coffee-and-tobacco" id="toc-mosaic-plot-cvd-by-coffee-and-tobacco" class="nav-link" data-scroll-target="#mosaic-plot-cvd-by-coffee-and-tobacco">Mosaic Plot (CVD by Coffee and Tobacco)</a></li>
   <li><a href="#interaction-plot-coffee-cvd-and-tobacco" id="toc-interaction-plot-coffee-cvd-and-tobacco" class="nav-link" data-scroll-target="#interaction-plot-coffee-cvd-and-tobacco">Interaction Plot (Coffee, CVD, and Tobacco)</a></li>
   </ul></li>
   <li><a href="#model-based-identification-of-confounding" id="toc-model-based-identification-of-confounding" class="nav-link" data-scroll-target="#model-based-identification-of-confounding">Model-based identification of confounding</a></li>
@@ -231,11 +230,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="correlation-heatmap" class="level2">
 <h2 class="anchored" data-anchor-id="correlation-heatmap">Correlation heatmap</h2>
 <p>The pairwise correlations between the variables can be visualised in a heatmap:</p>
-<ul>
-<li>Coffee and Tobacco have a moderate positive correlation, as expected, since smokers are more likely to drink coffee in this simulated dataset.</li>
-<li>Tobacco and CVD show a stronger positive correlation, reflecting that smoking increases the risk of cardiovascular disease.</li>
-<li>Coffee and CVD have a weaker positive correlation, which may be confounded by tobacco use.</li>
-</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the required package</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggcorrplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -253,6 +247,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>Interpretation:</p>
+<ul>
+<li>Coffee and Tobacco have a moderate positive correlation, as expected, since smokers are more likely to drink coffee in this simulated dataset.</li>
+<li>Tobacco and CVD show a stronger positive correlation, reflecting that smoking increases the risk of cardiovascular disease.</li>
+<li>Coffee and CVD have a weaker positive correlation, which may be confounded by tobacco use.</li>
+</ul>
 </section>
 <section id="scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping" class="level2">
 <h2 class="anchored" data-anchor-id="scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping">Scatterplot with Grouping (Exposure vs.&nbsp;Outcome with Confounder Grouping)</h2>
@@ -272,20 +272,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>This plot shows how the relationship between coffee and CVD changes when stratified by tobacco use. If there is confounding, the relationship between coffee and CVD should look different for smokers and non-smokers.</p>
-</section>
-<section id="mosaic-plot-cvd-by-coffee-and-tobacco" class="level2">
-<h2 class="anchored" data-anchor-id="mosaic-plot-cvd-by-coffee-and-tobacco">Mosaic Plot (CVD by Coffee and Tobacco)</h2>
-<p>A mosaic plot helps visualize the relationship between two categorical variables (coffee and CVD) while considering a third categorical variable (tobacco). It is a good way to see if the distribution of CVD cases changes with tobacco use.</p>
+<p>Vice versa, we can plot the relationship between tobacco use and CVD, stratified by coffee consumption. If there is confounding, the relationship between tobacco and CVD should look similar for coffee consumers and non-consumers.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mosaic plot to visualize the relationship between coffee, tobacco, and CVD</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mosaicplot</span>(<span class="sc">~</span> coffee <span class="sc">+</span> CVD <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">color =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="st">"Mosaic Plot of Coffee, CVD, and Tobacco"</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlab =</span> <span class="st">"Coffee Consumption"</span>, <span class="at">ylab =</span> <span class="st">"CVD Status"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a bar plot showing CVD rate by coffee consumption, stratified by tobacco use</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(tobacco), <span class="at">fill =</span> <span class="fu">factor</span>(CVD))) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> coffee, <span class="at">labeller =</span> <span class="fu">labeller</span>(<span class="at">coffee =</span> <span class="fu">c</span>(<span class="st">"0"</span> <span class="ot">=</span> <span class="st">"No coffee"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"Coffee"</span>))) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Tobacco use"</span>, <span class="at">fill =</span> <span class="st">"CVD Status"</span>, <span class="at">y =</span> <span class="st">"Proportion"</span>) <span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"0"</span> <span class="ot">=</span> <span class="st">"lightblue"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"CVD Proportion by Tobacco use (Stratified by Coffee Consumption)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>This mosaic plot helps identify if tobacco modifies the association between coffee and CVD. You can see if the size and color pattern of the boxes vary between smokers and non-smokers.</p>
 </section>
 <section id="interaction-plot-coffee-cvd-and-tobacco" class="level2">
 <h2 class="anchored" data-anchor-id="interaction-plot-coffee-cvd-and-tobacco">Interaction Plot (Coffee, CVD, and Tobacco)</h2>

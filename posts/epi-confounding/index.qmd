@@ -39,10 +39,6 @@ To visually check for confounding in the relationship between coffee consumption
 
 The pairwise correlations between the variables can be visualised in a heatmap:
 
-- Coffee and Tobacco have a moderate positive correlation, as expected, since smokers are more likely to drink coffee in this simulated dataset.
-- Tobacco and CVD show a stronger positive correlation, reflecting that smoking increases the risk of cardiovascular disease.
-- Coffee and CVD have a weaker positive correlation, which may be confounded by tobacco use.
-
 ```{r}
 # Load the required package
 library(ggcorrplot)
@@ -55,7 +51,11 @@ ggcorrplot(
   corr_matrix, method = "circle",
   lab = TRUE, title = "Correlation Matrix: Coffee, Tobacco, and CVD")
 ```
- 
+Interpretation:
+
+- Coffee and Tobacco have a moderate positive correlation, as expected, since smokers are more likely to drink coffee in this simulated dataset.
+- Tobacco and CVD show a stronger positive correlation, reflecting that smoking increases the risk of cardiovascular disease.
+- Coffee and CVD have a weaker positive correlation, which may be confounded by tobacco use.
     
 ## Scatterplot with Grouping (Exposure vs. Outcome with Confounder Grouping)
 
@@ -74,19 +74,17 @@ ggplot(data, aes(x = factor(coffee), fill = factor(CVD))) +
 ```
 This plot shows how the relationship between coffee and CVD changes when stratified by tobacco use. If there is confounding, the relationship between coffee and CVD should look different for smokers and non-smokers.
 
-## Mosaic Plot (CVD by Coffee and Tobacco)
-
-A mosaic plot helps visualize the relationship between two categorical variables (coffee and CVD) while considering a third categorical variable (tobacco). It is a good way to see if the distribution of CVD cases changes with tobacco use.
+Vice versa, we can plot the relationship between tobacco use and CVD, stratified by coffee consumption. If there is confounding, the relationship between tobacco and CVD should look similar for coffee consumers and non-consumers.
 
 ```{r}
-# Create a mosaic plot to visualize the relationship between coffee, tobacco, and CVD
-mosaicplot(~ coffee + CVD + tobacco, data = data, color = TRUE,
-           main = "Mosaic Plot of Coffee, CVD, and Tobacco",
-           xlab = "Coffee Consumption", ylab = "CVD Status")
+# Create a bar plot showing CVD rate by coffee consumption, stratified by tobacco use
+ggplot(data, aes(x = factor(tobacco), fill = factor(CVD))) +
+  geom_bar(position = "fill") +
+  facet_wrap(~ coffee, labeller = labeller(coffee = c("0" = "No coffee", "1" = "Coffee"))) +
+  labs(x = "Tobacco use", fill = "CVD Status", y = "Proportion") +
+  scale_fill_manual(values = c("0" = "lightblue", "1" = "red")) +
+  ggtitle("CVD Proportion by Tobacco use (Stratified by Coffee Consumption)")
 ```
-
-
-This mosaic plot helps identify if tobacco modifies the association between coffee and CVD. You can see if the size and color pattern of the boxes vary between smokers and non-smokers.
 
 ## Interaction Plot (Coffee, CVD, and Tobacco)
 
