@@ -1,0 +1,115 @@
+---
+title: "COnfounding"
+description: "Identifying and addressing confounding in observational data"
+date: "`r Sys.Date()`"
+---
+
+# Dummy dataset
+
+To demonstrate confounding in the relationship between coffee consumption and cardiovascular disease (CVD), using tobacco as a confounder, we first generate a dummy dataset with three variables: coffee consumption, CVD status, and tobacco use. We will assume that tobacco use affects both coffee consumption and the likelihood of CVD.
+
+```{r}
+# Settings
+set.seed(123)  # for reproducibility
+n <- 500       # number of iterations
+
+# Generate tobacco use (confounder)
+tobacco <- rbinom(n, 1, 0.4)  # 40% smokers
+
+# Generate coffee consumption based on tobacco use (confounder effect)
+# Smokers are more likely to drink coffee
+coffee <- rbinom(n, 1, prob = 0.2 + 0.5 * tobacco)  
+
+# Generate CVD based on tobacco use and coffee consumption
+# Tobacco is a stronger predictor of CVD
+CVD <- rbinom(n, 1, prob = 0.1 + 0.3 * tobacco + 0.05 * coffee)
+
+# Create the data frame
+data <- data.frame(coffee, tobacco, CVD)
+
+# Examine the first few rows of the dataset
+head(data)
+```
+
+# Visualising confounding
+
+To visually check for confounding in the relationship between coffee consumption and cardiovascular disease (CVD), we can use several types of plots in R. These plots help illustrate how the confounder (tobacco) influences both the exposure (coffee consumption) and the outcome (CVD).
+
+## Scatterplot with Grouping (Exposure vs. Outcome with Confounder Grouping)
+
+A scatterplot or barplot that groups the data by the confounder (tobacco) can visually show the confounding effect. In this case, we can plot the relationship between coffee and CVD, with separate lines or bars for smokers and non-smokers.
+
+```{r}
+library(ggplot2)
+
+# Create a bar plot showing CVD rate by coffee consumption, stratified by tobacco use
+ggplot(data, aes(x = factor(coffee), fill = factor(CVD))) +
+  geom_bar(position = "fill") +
+  facet_wrap(~ tobacco, labeller = labeller(tobacco = c("0" = "Non-smokers", "1" = "Smokers"))) +
+  labs(x = "Coffee Consumption", fill = "CVD Status", y = "Proportion") +
+  scale_fill_manual(values = c("0" = "lightblue", "1" = "red")) +
+  ggtitle("CVD Proportion by Coffee Consumption (Stratified by Tobacco Use)")
+```
+This plot shows how the relationship between coffee and CVD changes when stratified by tobacco use. If there is confounding, the relationship between coffee and CVD should look different for smokers and non-smokers.
+
+## Mosaic Plot (CVD by Coffee and Tobacco)
+
+A mosaic plot helps visualize the relationship between two categorical variables (coffee and CVD) while considering a third categorical variable (tobacco). It is a good way to see if the distribution of CVD cases changes with tobacco use.
+
+```{r}
+# Create a mosaic plot to visualize the relationship between coffee, tobacco, and CVD
+mosaicplot(~ coffee + CVD + tobacco, data = data, color = TRUE,
+           main = "Mosaic Plot of Coffee, CVD, and Tobacco",
+           xlab = "Coffee Consumption", ylab = "CVD Status")
+```
+
+
+This mosaic plot helps identify if tobacco modifies the association between coffee and CVD. You can see if the size and color pattern of the boxes vary between smokers and non-smokers.
+
+## Interaction Plot (Coffee, CVD, and Tobacco)
+
+An interaction plot can help visually assess whether there is an interaction effect between coffee consumption and tobacco use on the likelihood of CVD. It shows the predicted probabilities or the mean CVD rate across different groups.
+
+```{r}
+# Calculate mean CVD rate by coffee and tobacco groups
+mean_cvd <- aggregate(CVD ~ coffee + tobacco, data = data, FUN = mean)
+
+# Interaction plot
+ggplot(mean_cvd, aes(x = factor(coffee), y = CVD, color = factor(tobacco), group = tobacco)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(linewidth = 3) +
+  labs(x = "Coffee Consumption", y = "Mean CVD Rate", color = "Tobacco Use") +
+  ggtitle("Interaction Plot: Coffee Consumption, Tobacco, and Mean CVD Rate")
+
+```
+This plot illustrates how the relationship between coffee consumption and CVD varies by tobacco use. If tobacco is a confounder, the slopes for smokers and non-smokers should differ, suggesting that the effect of coffee on CVD is not the same for both groups.
+
+# Model-based identification of confounding
+
+We can analyze the relationship between coffee and CVD without adjusting for tobacco use and then include tobacco use to observe its confounding effect.
+
+First, we can see if there is a relationship between coffee consumption and CVD without considering tobacco as a confounder.
+
+```{r}
+# Unadjusted model (coffee vs CVD)
+unadjusted_model <- glm(CVD ~ coffee, data = data, family = "binomial")
+summary(unadjusted_model)
+```
+
+This will give us the log odds ratio for the effect of coffee consumption on CVD without considering tobacco.
+
+Now, we adjust for tobacco use to see if the relationship between coffee and CVD changes after accounting for the confounder.
+
+```{r}
+# Adjusted model (coffee vs CVD, adjusting for tobacco)
+adjusted_model <- glm(CVD ~ coffee + tobacco, data = data, family = "binomial")
+summary(adjusted_model)
+```
+
+By comparing the coefficients in both models, we can observe the confounding effect of tobacco on the coffee-CVD relationship.
+
+# R session info
+
+```{r}
+sessionInfo()
+```

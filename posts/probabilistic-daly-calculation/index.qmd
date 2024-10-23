@@ -1,108 +1,76 @@
 ---
 title: "Probabilistic DALY calculation"
-description: "Some useful functions to fit distributions to means, confidence intervals and standard errors"
+description: "Quantify and propagate uncertainty in DALY calculations"
 date: "`r Sys.Date()`"
 draft: true
 ---
 
-# Fit to a mean and confidence interval
+# Probabilistic DALY calculations
 
-## Beta distribution
+## Monte Carlo simulations
+
+Monte Carlo simulations are the common standard for quantifying and propagating uncertainty from the inputs to the output. For DALY calculations, this implies that we want to quantify the uncertainty in the incidence, duration, disability weight, mortality, etc, parameters. At each "iteration" of the Monte Carlo process, we then randomly select one "plausible" value for each of these inputs, and apply the DALY calculation formula to this set of plausible values, to obtain one "plausible" DALY estimate. By repeating this process multiple times, we then end up with a distribution of plausible DALY estimates, which reflects the joint uncertainty in the inputs. This resulting empirical distribution of random/plausible DALY estimates can then be summarized e.g. by its mean and a 95% uncertainty interval defined as the 2.5 and 97.5th percentile of the distribution.
+
+![](monte-carlo.png)
 
 ```{r}
-## function for fitting
-fit_beta <-
-function (par, p = 0.95) {
-  target <- par[2:3]
-  p <- c(0, p) + (1 - p)/2
-  f <-
-  function(x, mean, p, target) {
-    dev <- qbeta(p = p, shape1 = x, shape2 = x/mean - x)
-    return(sum((dev - target)^2))
-  }
-  shape1 <-
-    optimize(f, c(0, 1e4), mean = par[1], p = p, target = target)$minimum
-  shape2 <- shape1 / par[1] - shape1
-  return(list(shape1 = shape1, shape2 = shape2))
-}
+## settings
+set.seed(123) # allows for reproducibility
+n <- 1e5      # number of iterations
 
-## function for simulating from fitted distribution
-sim_beta <-
-  function(n, ...) {
-    fit <- fit_beta(...)
-    return(rbeta(n, fit$shape1, fit$shape2))
-  }
+## define the probability distributions for the inputs
+inc <- rgamma(n, 100, 10) # incidence per 100,000
+dur <- runif(n, 0.5, 1)    # duration (in years)
+dsw <- rbeta(n, 5, 10)     # disability weight
+mrt <- rgamma(n, 1, 10)  # mortality per 100,000
 
-## disability weights for diarrhea
-dw_dia_mld <- c(0.074, 0.049, 0.104)
-dw_dia_mod <- c(0.188, 0.125, 0.264)
-dw_dia_sev <- c(0.247, 0.164, 0.348)
+## show the uncertainty distributions
+par(mfrow = c(2, 2))
+hist(inc)
+hist(dur)
+hist(dsw)
+hist(mrt)
 
-## simulate from fitted Beta distribution
-n <- 1e5
-sim_dw_dia_mld <- sim_beta(n, dw_dia_mld)
-sim_dw_dia_mod <- sim_beta(n, dw_dia_mod)
-sim_dw_dia_sev <- sim_beta(n, dw_dia_sev)
+## we will also use some fixed parameters
+pop <- 12000000 # total number of people in population (12M)
+rle <- 30       # residual life expectancy at age of death
 
-## compare fitted to observed values
-summarize <-
-  function(x, probs = c(0.025, 0.975), ...) {
+## calculate DALYs
+yld <- pop * (inc/100000) * dur * dsw
+yll <- pop * (mrt/100000) * rle
+daly <- yld + yll
+
+## show resulting uncertainty distributions
+par(mfrow = c(1, 3))
+hist(yld)
+hist(yll)
+hist(daly)
+
+## summarize results
+mean_ui <-
+  function(x, ...) {
     c(mean = mean(x, ...),
-      quantile(x, probs, ...))
+      quantile(x, c(0.025, 0.975)))
   }
 
-rbind(observed = dw_dia_mld, fitted = summarize(sim_dw_dia_mld))
-rbind(observed = dw_dia_mod, fitted = summarize(sim_dw_dia_mod))
-rbind(observed = dw_dia_sev, fitted = summarize(sim_dw_dia_sev))
-
-## visualize random values
-boxplot(
-  las = 1,
-  ylab = "Disability Weight",
-  cbind("Mild" = sim_dw_dia_mld,
-        "Moderate" = sim_dw_dia_mod,
-        "Severe" = sim_dw_dia_sev))
+round(
+  rbind(
+    YLD = mean_ui(yld),
+    YLL = mean_ui(yll),
+    DALY = mean_ui(daly)))
 ```
 
-# Fit to a confidence interval
+## Stratification uncertainty
 
-## Gamma distribution
+## Bring in social weighting
 
-```{r}
-## function for fitting
-fit_gamma <-
-function(q, p = 0.95) {
-  p <- c(0, p) + (1 - p)/2
+# How to define uncertainty distributions for inputs?
 
-  f <-
-    function(x, p, target) {
-      dev <- qgamma(p = p, shape = x[1], rate = x[2])
-      return(sum((dev - target) ^ 2))
-    }
+## Expert opinion
 
-  fit <- optim(par = c(1, 1), fn = f, p = p, target = q)
+## Data
 
-  return(fit$par)
-}
-```
-
-# Simulate based on mean and SE
-
-```{r}
-## Gamma distribution
-rgamma2 <-
-function(n, m, s) {
-  rgamma(n, m^2/s^2, m/s^2)
-}
-
-## Beta distribution
-rbeta2 <-
-function(n, m, s) {
-  a <- m^2 * ((1 - m) / s^2 - 1 / m)
-  b <- (1/m - 1) * a
-  rbeta(n, a, b)
-}
-```
+## Statistical uncertainty
 
 # R session info
 

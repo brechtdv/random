@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Home",
     "section": "",
-    "text": "Fitting distributions\n\n\n\n\n\nSome useful functions to fit distributions to means, confidence intervals and standard errors\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\n  \n\n\n\n\nSIR model\n\n\n\n\n\nDifferent implementations of the basic SIR model\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\nNo matching items"
+    "text": "COnfounding\n\n\n\n\n\nIdentifying and addressing confounding in observational data\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\n  \n\n\n\n\nFitting distributions\n\n\n\n\n\nSome useful functions to fit distributions to means, confidence intervals and standard errors\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\n  \n\n\n\n\nSIR model\n\n\n\n\n\nDifferent implementations of the basic SIR model\n\n\n\n\n\n\nInvalid Date\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -166,5 +166,33 @@
     "title": "SIR model",
     "section": "Plot",
     "text": "Plot\n\nmatplot(\n  runs[, , 1],\n  type = \"l\",\n  col = c(\"green\", \"red\", \"blue\"),\n  las = 1)\nfor (i in seq(2, 10))\n  matplot(\n    runs[, , i],\n    type = \"l\",\n    col = c(\"green\", \"red\", \"blue\"),\n    las = 1,\n    add = TRUE)"
+  },
+  {
+    "objectID": "posts/epi-confounding/index.html",
+    "href": "posts/epi-confounding/index.html",
+    "title": "COnfounding",
+    "section": "",
+    "text": "To demonstrate confounding in the relationship between coffee consumption and cardiovascular disease (CVD), using tobacco as a confounder, we first generate a dummy dataset with three variables: coffee consumption, CVD status, and tobacco use. We will assume that tobacco use affects both coffee consumption and the likelihood of CVD.\n\n# Settings\nset.seed(123)  # for reproducibility\nn &lt;- 500       # number of iterations\n\n# Generate tobacco use (confounder)\ntobacco &lt;- rbinom(n, 1, 0.4)  # 40% smokers\n\n# Generate coffee consumption based on tobacco use (confounder effect)\n# Smokers are more likely to drink coffee\ncoffee &lt;- rbinom(n, 1, prob = 0.2 + 0.5 * tobacco)  \n\n# Generate CVD based on tobacco use and coffee consumption\n# Tobacco is a stronger predictor of CVD\nCVD &lt;- rbinom(n, 1, prob = 0.1 + 0.3 * tobacco + 0.05 * coffee)\n\n# Create the data frame\ndata &lt;- data.frame(coffee, tobacco, CVD)\n\n# Examine the first few rows of the dataset\nhead(data)\n\n  coffee tobacco CVD\n1      0       0   0\n2      1       1   1\n3      0       0   0\n4      1       1   1\n5      1       1   1\n6      0       0   0"
+  },
+  {
+    "objectID": "posts/epi-confounding/index.html#scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping",
+    "href": "posts/epi-confounding/index.html#scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping",
+    "title": "COnfounding",
+    "section": "Scatterplot with Grouping (Exposure vs. Outcome with Confounder Grouping)",
+    "text": "Scatterplot with Grouping (Exposure vs. Outcome with Confounder Grouping)\nA scatterplot or barplot that groups the data by the confounder (tobacco) can visually show the confounding effect. In this case, we can plot the relationship between coffee and CVD, with separate lines or bars for smokers and non-smokers.\n\nlibrary(ggplot2)\n\n# Create a bar plot showing CVD rate by coffee consumption, stratified by tobacco use\nggplot(data, aes(x = factor(coffee), fill = factor(CVD))) +\n  geom_bar(position = \"fill\") +\n  facet_wrap(~ tobacco, labeller = labeller(tobacco = c(\"0\" = \"Non-smokers\", \"1\" = \"Smokers\"))) +\n  labs(x = \"Coffee Consumption\", fill = \"CVD Status\", y = \"Proportion\") +\n  scale_fill_manual(values = c(\"0\" = \"lightblue\", \"1\" = \"red\")) +\n  ggtitle(\"CVD Proportion by Coffee Consumption (Stratified by Tobacco Use)\")\n\n\n\n\nThis plot shows how the relationship between coffee and CVD changes when stratified by tobacco use. If there is confounding, the relationship between coffee and CVD should look different for smokers and non-smokers."
+  },
+  {
+    "objectID": "posts/epi-confounding/index.html#mosaic-plot-cvd-by-coffee-and-tobacco",
+    "href": "posts/epi-confounding/index.html#mosaic-plot-cvd-by-coffee-and-tobacco",
+    "title": "COnfounding",
+    "section": "Mosaic Plot (CVD by Coffee and Tobacco)",
+    "text": "Mosaic Plot (CVD by Coffee and Tobacco)\nA mosaic plot helps visualize the relationship between two categorical variables (coffee and CVD) while considering a third categorical variable (tobacco). It is a good way to see if the distribution of CVD cases changes with tobacco use.\n\n# Create a mosaic plot to visualize the relationship between coffee, tobacco, and CVD\nmosaicplot(~ coffee + CVD + tobacco, data = data, color = TRUE,\n           main = \"Mosaic Plot of Coffee, CVD, and Tobacco\",\n           xlab = \"Coffee Consumption\", ylab = \"CVD Status\")\n\n\n\n\nThis mosaic plot helps identify if tobacco modifies the association between coffee and CVD. You can see if the size and color pattern of the boxes vary between smokers and non-smokers."
+  },
+  {
+    "objectID": "posts/epi-confounding/index.html#interaction-plot-coffee-cvd-and-tobacco",
+    "href": "posts/epi-confounding/index.html#interaction-plot-coffee-cvd-and-tobacco",
+    "title": "COnfounding",
+    "section": "Interaction Plot (Coffee, CVD, and Tobacco)",
+    "text": "Interaction Plot (Coffee, CVD, and Tobacco)\nAn interaction plot can help visually assess whether there is an interaction effect between coffee consumption and tobacco use on the likelihood of CVD. It shows the predicted probabilities or the mean CVD rate across different groups.\n\n# Calculate mean CVD rate by coffee and tobacco groups\nmean_cvd &lt;- aggregate(CVD ~ coffee + tobacco, data = data, FUN = mean)\n\n# Interaction plot\nggplot(mean_cvd, aes(x = factor(coffee), y = CVD, color = factor(tobacco), group = tobacco)) +\n  geom_line(linewidth = 1.2) +\n  geom_point(linewidth = 3) +\n  labs(x = \"Coffee Consumption\", y = \"Mean CVD Rate\", color = \"Tobacco Use\") +\n  ggtitle(\"Interaction Plot: Coffee Consumption, Tobacco, and Mean CVD Rate\")\n\nWarning in geom_point(linewidth = 3): Ignoring unknown parameters: `linewidth`\n\n\n\n\n\nThis plot illustrates how the relationship between coffee consumption and CVD varies by tobacco use. If tobacco is a confounder, the slopes for smokers and non-smokers should differ, suggesting that the effect of coffee on CVD is not the same for both groups."
   }
 ]

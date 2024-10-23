@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/epi-confounding/index.html",
       "/posts/fitting-distributions/index.html",
       "/posts/sir-model/index.html"
     ]
