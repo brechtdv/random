@@ -143,6 +143,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#dummy-dataset" id="toc-dummy-dataset" class="nav-link active" data-scroll-target="#dummy-dataset">Dummy dataset</a></li>
   <li><a href="#visualising-confounding" id="toc-visualising-confounding" class="nav-link" data-scroll-target="#visualising-confounding">Visualising confounding</a>
   <ul class="collapse">
+  <li><a href="#correlation-heatmap" id="toc-correlation-heatmap" class="nav-link" data-scroll-target="#correlation-heatmap">Correlation heatmap</a></li>
   <li><a href="#scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping" id="toc-scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping" class="nav-link" data-scroll-target="#scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping">Scatterplot with Grouping (Exposure vs.&nbsp;Outcome with Confounder Grouping)</a></li>
   <li><a href="#mosaic-plot-cvd-by-coffee-and-tobacco" id="toc-mosaic-plot-cvd-by-coffee-and-tobacco" class="nav-link" data-scroll-target="#mosaic-plot-cvd-by-coffee-and-tobacco">Mosaic Plot (CVD by Coffee and Tobacco)</a></li>
   <li><a href="#interaction-plot-coffee-cvd-and-tobacco" id="toc-interaction-plot-coffee-cvd-and-tobacco" class="nav-link" data-scroll-target="#interaction-plot-coffee-cvd-and-tobacco">Interaction Plot (Coffee, CVD, and Tobacco)</a></li>
@@ -227,21 +228,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="visualising-confounding" class="level1">
 <h1>Visualising confounding</h1>
 <p>To visually check for confounding in the relationship between coffee consumption and cardiovascular disease (CVD), we can use several types of plots in R. These plots help illustrate how the confounder (tobacco) influences both the exposure (coffee consumption) and the outcome (CVD).</p>
+<section id="correlation-heatmap" class="level2">
+<h2 class="anchored" data-anchor-id="correlation-heatmap">Correlation heatmap</h2>
+<p>The pairwise correlations between the variables can be visualised in a heatmap:</p>
+<ul>
+<li>Coffee and Tobacco have a moderate positive correlation, as expected, since smokers are more likely to drink coffee in this simulated dataset.</li>
+<li>Tobacco and CVD show a stronger positive correlation, reflecting that smoking increases the risk of cardiovascular disease.</li>
+<li>Coffee and CVD have a weaker positive correlation, which may be confounded by tobacco use.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the required package</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggcorrplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: ggplot2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the correlation matrix</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>corr_matrix <span class="ot">&lt;-</span> <span class="fu">cor</span>(data)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the correlation heatmap</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorrplot</span>(</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  corr_matrix, <span class="at">method =</span> <span class="st">"circle"</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">lab =</span> <span class="cn">TRUE</span>, <span class="at">title =</span> <span class="st">"Correlation Matrix: Coffee, Tobacco, and CVD"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
 <section id="scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping" class="level2">
 <h2 class="anchored" data-anchor-id="scatterplot-with-grouping-exposure-vs.-outcome-with-confounder-grouping">Scatterplot with Grouping (Exposure vs.&nbsp;Outcome with Confounder Grouping)</h2>
 <p>A scatterplot or barplot that groups the data by the confounder (tobacco) can visually show the confounding effect. In this case, we can plot the relationship between coffee and CVD, with separate lines or bars for smokers and non-smokers.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a bar plot showing CVD rate by coffee consumption, stratified by tobacco use</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(coffee), <span class="at">fill =</span> <span class="fu">factor</span>(CVD))) <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> tobacco, <span class="at">labeller =</span> <span class="fu">labeller</span>(<span class="at">tobacco =</span> <span class="fu">c</span>(<span class="st">"0"</span> <span class="ot">=</span> <span class="st">"Non-smokers"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"Smokers"</span>))) <span class="sc">+</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Coffee Consumption"</span>, <span class="at">fill =</span> <span class="st">"CVD Status"</span>, <span class="at">y =</span> <span class="st">"Proportion"</span>) <span class="sc">+</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"0"</span> <span class="ot">=</span> <span class="st">"lightblue"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"CVD Proportion by Coffee Consumption (Stratified by Tobacco Use)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a bar plot showing CVD rate by coffee consumption, stratified by tobacco use</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(coffee), <span class="at">fill =</span> <span class="fu">factor</span>(CVD))) <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> tobacco, <span class="at">labeller =</span> <span class="fu">labeller</span>(<span class="at">tobacco =</span> <span class="fu">c</span>(<span class="st">"0"</span> <span class="ot">=</span> <span class="st">"Non-smokers"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"Smokers"</span>))) <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Coffee Consumption"</span>, <span class="at">fill =</span> <span class="st">"CVD Status"</span>, <span class="at">y =</span> <span class="st">"Proportion"</span>) <span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"0"</span> <span class="ot">=</span> <span class="st">"lightblue"</span>, <span class="st">"1"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"CVD Proportion by Coffee Consumption (Stratified by Tobacco Use)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>This plot shows how the relationship between coffee and CVD changes when stratified by tobacco use. If there is confounding, the relationship between coffee and CVD should look different for smokers and non-smokers.</p>
@@ -250,12 +277,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="mosaic-plot-cvd-by-coffee-and-tobacco">Mosaic Plot (CVD by Coffee and Tobacco)</h2>
 <p>A mosaic plot helps visualize the relationship between two categorical variables (coffee and CVD) while considering a third categorical variable (tobacco). It is a good way to see if the distribution of CVD cases changes with tobacco use.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mosaic plot to visualize the relationship between coffee, tobacco, and CVD</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mosaicplot</span>(<span class="sc">~</span> coffee <span class="sc">+</span> CVD <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">color =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="st">"Mosaic Plot of Coffee, CVD, and Tobacco"</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlab =</span> <span class="st">"Coffee Consumption"</span>, <span class="at">ylab =</span> <span class="st">"CVD Status"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a mosaic plot to visualize the relationship between coffee, tobacco, and CVD</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mosaicplot</span>(<span class="sc">~</span> coffee <span class="sc">+</span> CVD <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">color =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="st">"Mosaic Plot of Coffee, CVD, and Tobacco"</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlab =</span> <span class="st">"Coffee Consumption"</span>, <span class="at">ylab =</span> <span class="st">"CVD Status"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>This mosaic plot helps identify if tobacco modifies the association between coffee and CVD. You can see if the size and color pattern of the boxes vary between smokers and non-smokers.</p>
@@ -264,20 +291,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="interaction-plot-coffee-cvd-and-tobacco">Interaction Plot (Coffee, CVD, and Tobacco)</h2>
 <p>An interaction plot can help visually assess whether there is an interaction effect between coffee consumption and tobacco use on the likelihood of CVD. It shows the predicted probabilities or the mean CVD rate across different groups.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate mean CVD rate by coffee and tobacco groups</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>mean_cvd <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(CVD <span class="sc">~</span> coffee <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">FUN =</span> mean)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Interaction plot</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mean_cvd, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(coffee), <span class="at">y =</span> CVD, <span class="at">color =</span> <span class="fu">factor</span>(tobacco), <span class="at">group =</span> tobacco)) <span class="sc">+</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">linewidth =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Coffee Consumption"</span>, <span class="at">y =</span> <span class="st">"Mean CVD Rate"</span>, <span class="at">color =</span> <span class="st">"Tobacco Use"</span>) <span class="sc">+</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interaction Plot: Coffee Consumption, Tobacco, and Mean CVD Rate"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate mean CVD rate by coffee and tobacco groups</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>mean_cvd <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(CVD <span class="sc">~</span> coffee <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">FUN =</span> mean)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Interaction plot</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(mean_cvd, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">factor</span>(coffee), <span class="at">y =</span> CVD, <span class="at">color =</span> <span class="fu">factor</span>(tobacco), <span class="at">group =</span> tobacco)) <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">linewidth =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Coffee Consumption"</span>, <span class="at">y =</span> <span class="st">"Mean CVD Rate"</span>, <span class="at">color =</span> <span class="st">"Tobacco Use"</span>) <span class="sc">+</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Interaction Plot: Coffee Consumption, Tobacco, and Mean CVD Rate"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in geom_point(linewidth = 3): Ignoring unknown parameters: `linewidth`</code></pre>
 </div>
 <div class="cell-output-display">
-<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>This plot illustrates how the relationship between coffee consumption and CVD varies by tobacco use. If tobacco is a confounder, the slopes for smokers and non-smokers should differ, suggesting that the effect of coffee on CVD is not the same for both groups.</p>
@@ -288,9 +315,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>We can analyze the relationship between coffee and CVD without adjusting for tobacco use and then include tobacco use to observe its confounding effect.</p>
 <p>First, we can see if there is a relationship between coffee consumption and CVD without considering tobacco as a confounder.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Unadjusted model (coffee vs CVD)</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>unadjusted_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee, <span class="at">data =</span> data, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(unadjusted_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Unadjusted model (coffee vs CVD)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>unadjusted_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee, <span class="at">data =</span> data, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(unadjusted_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -315,9 +342,9 @@ Number of Fisher Scoring iterations: 4</code></pre>
 <p>This will give us the log odds ratio for the effect of coffee consumption on CVD without considering tobacco.</p>
 <p>Now, we adjust for tobacco use to see if the relationship between coffee and CVD changes after accounting for the confounder.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjusted model (coffee vs CVD, adjusting for tobacco)</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>adjusted_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adjusted_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Adjusted model (coffee vs CVD, adjusting for tobacco)</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>adjusted_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adjusted_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -348,10 +375,10 @@ Number of Fisher Scoring iterations: 4</code></pre>
 <h2 class="anchored" data-anchor-id="stratification-by-tobacco-use">Stratification by tobacco use</h2>
 <p>We can stratify the analysis by tobacco use to compare the effect of coffee on CVD within each group (smokers and non-smokers).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stratified analysis for non-smokers</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>non_smokers <span class="ot">&lt;-</span> <span class="fu">subset</span>(data, tobacco <span class="sc">==</span> <span class="dv">0</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>strat_model_ns <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee, <span class="at">data =</span> non_smokers, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(strat_model_ns)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stratified analysis for non-smokers</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>non_smokers <span class="ot">&lt;-</span> <span class="fu">subset</span>(data, tobacco <span class="sc">==</span> <span class="dv">0</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>strat_model_ns <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee, <span class="at">data =</span> non_smokers, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(strat_model_ns)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -372,10 +399,10 @@ AIC: 199.62
 
 Number of Fisher Scoring iterations: 5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stratified analysis for smokers</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>smokers <span class="ot">&lt;-</span> <span class="fu">subset</span>(data, tobacco <span class="sc">==</span> <span class="dv">1</span>)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>strat_model_sm <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee, <span class="at">data =</span> smokers, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(strat_model_sm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Stratified analysis for smokers</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>smokers <span class="ot">&lt;-</span> <span class="fu">subset</span>(data, tobacco <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>strat_model_sm <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee, <span class="at">data =</span> smokers, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(strat_model_sm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -402,8 +429,8 @@ Number of Fisher Scoring iterations: 4</code></pre>
 <h2 class="anchored" data-anchor-id="regression-adjustment">Regression adjustment</h2>
 <p>As done earlier, logistic regression models can adjust for tobacco use. This method is often more convenient than stratification.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The adjusted model shown earlier adjusts for tobacco use</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adjusted_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The adjusted model shown earlier adjusts for tobacco use</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adjusted_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -436,15 +463,15 @@ Number of Fisher Scoring iterations: 4</code></pre>
 <li>Fit an outcome model: Model the relationship between the confounder (tobacco), the exposure (coffee), and the outcome (CVD).</li>
 <li>Predict counterfactual outcomes: Use the model to predict the probability of CVD for everyone in the dataset assuming two different scenarios:
 <ul>
-<li>Everyone drank coffee (coffee = 1).</li>
-<li>No one drank coffee (coffee = 0).</li>
+<li>Everyone drank coffee (<code>coffee = 1</code>).</li>
+<li>No one drank coffee (<code>coffee = 0</code>).</li>
 </ul></li>
 <li>Estimate the causal effect: Compare the average predicted outcomes under the two scenarios to estimate the causal effect of coffee consumption on CVD.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a logistic regression model for the outcome</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>outcome_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">family =</span> binomial)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(outcome_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a logistic regression model for the outcome</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>outcome_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">family =</span> binomial)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(outcome_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -466,27 +493,27 @@ AIC: 465.82
 
 Number of Fisher Scoring iterations: 4</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 1 (everyone drinks coffee)</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>data_coffee1 <span class="ot">&lt;-</span> data</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>data_coffee1<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if all drank coffee</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee1, <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 0 (no one drinks coffee)</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>data_coffee0 <span class="ot">&lt;-</span> data</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>data_coffee0<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if no one drank coffee</span></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee0, <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the mean predicted probability of CVD under both scenarios</span></span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee1)</span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee0)</span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the average causal effect (risk difference)</span></span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>causal_effect <span class="ot">&lt;-</span> mean_pred_coffee1 <span class="sc">-</span> mean_pred_coffee0</span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>causal_effect</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 1 (everyone drinks coffee)</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>data_coffee1 <span class="ot">&lt;-</span> data</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>data_coffee1<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if all drank coffee</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee1, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 0 (no one drinks coffee)</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>data_coffee0 <span class="ot">&lt;-</span> data</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>data_coffee0<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if no one drank coffee</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee0, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the mean predicted probability of CVD under both scenarios</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee1)</span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee0)</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the average causal effect (risk difference)</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>causal_effect <span class="ot">&lt;-</span> mean_pred_coffee1 <span class="sc">-</span> mean_pred_coffee0</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>causal_effect</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.06703175</code></pre>
 </div>
@@ -496,7 +523,7 @@ Number of Fisher Scoring iterations: 4</code></pre>
 <section id="r-session-info" class="level1">
 <h1>R session info</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.4.1 (2024-06-14 ucrt)
 Platform: x86_64-w64-mingw32/x64
@@ -517,18 +544,20 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ggplot2_3.5.1
+[1] ggcorrplot_0.1.4.1 ggplot2_3.5.1     
 
 loaded via a namespace (and not attached):
  [1] vctrs_0.6.5       cli_3.6.3         knitr_1.48        rlang_1.1.4      
- [5] xfun_0.45         generics_0.1.3    jsonlite_1.8.8    labeling_0.4.3   
- [9] glue_1.7.0        colorspace_2.1-0  htmltools_0.5.8.1 scales_1.3.0     
-[13] fansi_1.0.6       rmarkdown_2.27    grid_4.4.1        evaluate_0.24.0  
-[17] munsell_0.5.1     tibble_3.2.1      fastmap_1.2.0     yaml_2.3.9       
-[21] lifecycle_1.0.4   compiler_4.4.1    dplyr_1.1.4       htmlwidgets_1.6.4
-[25] pkgconfig_2.0.3   rstudioapi_0.16.0 farver_2.1.2      digest_0.6.36    
-[29] R6_2.5.1          tidyselect_1.2.1  utf8_1.2.4        pillar_1.9.0     
-[33] magrittr_2.0.3    withr_3.0.0       tools_4.4.1       gtable_0.3.5     </code></pre>
+ [5] xfun_0.45         stringi_1.8.4     generics_0.1.3    jsonlite_1.8.8   
+ [9] labeling_0.4.3    glue_1.7.0        colorspace_2.1-0  plyr_1.8.9       
+[13] htmltools_0.5.8.1 scales_1.3.0      fansi_1.0.6       rmarkdown_2.27   
+[17] grid_4.4.1        evaluate_0.24.0   munsell_0.5.1     tibble_3.2.1     
+[21] fastmap_1.2.0     reshape2_1.4.4    yaml_2.3.9        lifecycle_1.0.4  
+[25] stringr_1.5.1     compiler_4.4.1    dplyr_1.1.4       Rcpp_1.0.12      
+[29] htmlwidgets_1.6.4 pkgconfig_2.0.3   rstudioapi_0.16.0 farver_2.1.2     
+[33] digest_0.6.36     R6_2.5.1          tidyselect_1.2.1  utf8_1.2.4       
+[37] pillar_1.9.0      magrittr_2.0.3    withr_3.0.0       tools_4.4.1      
+[41] gtable_0.3.5     </code></pre>
 </div>
 </div>
 

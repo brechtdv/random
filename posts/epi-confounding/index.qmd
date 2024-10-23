@@ -35,6 +35,28 @@ head(data)
 
 To visually check for confounding in the relationship between coffee consumption and cardiovascular disease (CVD), we can use several types of plots in R. These plots help illustrate how the confounder (tobacco) influences both the exposure (coffee consumption) and the outcome (CVD).
 
+## Correlation heatmap
+
+The pairwise correlations between the variables can be visualised in a heatmap:
+
+- Coffee and Tobacco have a moderate positive correlation, as expected, since smokers are more likely to drink coffee in this simulated dataset.
+- Tobacco and CVD show a stronger positive correlation, reflecting that smoking increases the risk of cardiovascular disease.
+- Coffee and CVD have a weaker positive correlation, which may be confounded by tobacco use.
+
+```{r}
+# Load the required package
+library(ggcorrplot)
+
+# Compute the correlation matrix
+corr_matrix <- cor(data)
+
+# Plot the correlation heatmap
+ggcorrplot(
+  corr_matrix, method = "circle",
+  lab = TRUE, title = "Correlation Matrix: Coffee, Tobacco, and CVD")
+```
+ 
+    
 ## Scatterplot with Grouping (Exposure vs. Outcome with Confounder Grouping)
 
 A scatterplot or barplot that groups the data by the confounder (tobacco) can visually show the confounding effect. In this case, we can plot the relationship between coffee and CVD, with separate lines or bars for smokers and non-smokers.
