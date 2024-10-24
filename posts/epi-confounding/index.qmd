@@ -175,6 +175,27 @@ cbind(
 ```
 Note how the adjusted OR for coffee consumption is similar to the Mantel-Haenszel corrected OR. 
 
+## Classification tree
+
+Classification trees provide a hierarchical structure of relationships between variables. By examining the tree structure, we can see which variables are driving the splits (important predictors of the outcome). If a variable that could be a potential confounder (e.g., age, smoking status) is frequently chosen to split the data, it may indicate that this variable plays an important role in explaining the outcome.
+
+Random forests, an extension of decision trees, consist of an ensemble of decision trees where each tree is trained on a random subset of the data and variables. Random forests rank variables by their importance in predicting the outcome. If a potential confounder (e.g., smoking) has high importance, it suggests that this variable influences both the outcome (e.g., CVD) and the exposure (e.g., coffee consumption), signaling confounding.
+
+```{r}
+library(rpart)
+library(randomForest)
+
+# Fit classification tree
+fitTree <- rpart(factor(CVD) ~ coffee + tobacco, data = data)
+print(fitTree)
+
+# Fit random forest
+rf <- randomForest(factor(CVD) ~ coffee + tobacco, data = data, ntree = 1000)
+
+# Show variable importance
+importance(rf)
+```
+
 ## G-computation
 
 G-computation (or the G-formula) is a causal inference method derived from the counterfactual framework, often used to estimate the causal effect of an exposure on an outcome, adjusting for confounders. G-computation models the outcome (e.g., cardiovascular disease, CVD) under different hypothetical scenarios of the exposure (e.g., coffee consumption) and then averages these over the distribution of confounders (e.g., tobacco use).

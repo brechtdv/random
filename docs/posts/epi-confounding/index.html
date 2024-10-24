@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2024-10-23">
+<meta name="dcterms.date" content="2024-10-24">
 <meta name="description" content="Identifying and addressing confounding in observational data">
 
 <title>random - Confounding</title>
@@ -152,6 +152,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#stratification-by-tobacco-use" id="toc-stratification-by-tobacco-use" class="nav-link" data-scroll-target="#stratification-by-tobacco-use">Stratification by tobacco use</a></li>
   <li><a href="#regression-adjustment" id="toc-regression-adjustment" class="nav-link" data-scroll-target="#regression-adjustment">Regression adjustment</a></li>
+  <li><a href="#classification-tree" id="toc-classification-tree" class="nav-link" data-scroll-target="#classification-tree">Classification tree</a></li>
   <li><a href="#g-computation" id="toc-g-computation" class="nav-link" data-scroll-target="#g-computation">G-computation</a></li>
   </ul></li>
   <li><a href="#r-session-info" id="toc-r-session-info" class="nav-link" data-scroll-target="#r-session-info">R session info</a></li>
@@ -179,7 +180,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 23, 2024</p>
+      <p class="date">October 24, 2024</p>
     </div>
   </div>
   
@@ -532,6 +533,51 @@ tobacco     5.66535568 3.39174231 9.6687771</code></pre>
 </div>
 <p>Note how the adjusted OR for coffee consumption is similar to the Mantel-Haenszel corrected OR.</p>
 </section>
+<section id="classification-tree" class="level2">
+<h2 class="anchored" data-anchor-id="classification-tree">Classification tree</h2>
+<p>Classification trees provide a hierarchical structure of relationships between variables. By examining the tree structure, we can see which variables are driving the splits (important predictors of the outcome). If a variable that could be a potential confounder (e.g., age, smoking status) is frequently chosen to split the data, it may indicate that this variable plays an important role in explaining the outcome.</p>
+<p>Random forests, an extension of decision trees, consist of an ensemble of decision trees where each tree is trained on a random subset of the data and variables. Random forests rank variables by their importance in predicting the outcome. If a potential confounder (e.g., smoking) has high importance, it suggests that this variable influences both the outcome (e.g., CVD) and the exposure (e.g., coffee consumption), signaling confounding.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rpart)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(randomForest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>randomForest 4.7-1.2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Type rfNews() to see new features/changes/bug fixes.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'randomForest'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:ggplot2':
+
+    margin</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit classification tree</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>fitTree <span class="ot">&lt;-</span> <span class="fu">rpart</span>(<span class="fu">factor</span>(CVD) <span class="sc">~</span> coffee <span class="sc">+</span> tobacco, <span class="at">data =</span> data)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(fitTree)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>n= 500 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+1) root 500 114 0 (0.7720000 0.2280000) *</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit random forest</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>rf <span class="ot">&lt;-</span> <span class="fu">randomForest</span>(<span class="fu">factor</span>(CVD) <span class="sc">~</span> coffee <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">ntree =</span> <span class="dv">1000</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Show variable importance</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="fu">importance</span>(rf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        MeanDecreaseGini
+coffee          6.203028
+tobacco        17.299934</code></pre>
+</div>
+</div>
+</section>
 <section id="g-computation" class="level2">
 <h2 class="anchored" data-anchor-id="g-computation">G-computation</h2>
 <p>G-computation (or the G-formula) is a causal inference method derived from the counterfactual framework, often used to estimate the causal effect of an exposure on an outcome, adjusting for confounders. G-computation models the outcome (e.g., cardiovascular disease, CVD) under different hypothetical scenarios of the exposure (e.g., coffee consumption) and then averages these over the distribution of confounders (e.g., tobacco use).</p>
@@ -547,9 +593,9 @@ tobacco     5.66535568 3.39174231 9.6687771</code></pre>
 <li>Estimate the causal effect: Compare the average predicted outcomes under the two scenarios to estimate the causal effect of coffee consumption on CVD.</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a logistic regression model for the outcome</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>outcome_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">family =</span> binomial)</span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(outcome_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a logistic regression model for the outcome</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>outcome_model <span class="ot">&lt;-</span> <span class="fu">glm</span>(CVD <span class="sc">~</span> coffee <span class="sc">+</span> tobacco, <span class="at">data =</span> data, <span class="at">family =</span> binomial)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(outcome_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -571,27 +617,27 @@ AIC: 465.82
 
 Number of Fisher Scoring iterations: 4</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 1 (everyone drinks coffee)</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>data_coffee1 <span class="ot">&lt;-</span> data</span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>data_coffee1<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if all drank coffee</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee1, <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 0 (no one drinks coffee)</span></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>data_coffee0 <span class="ot">&lt;-</span> data</span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>data_coffee0<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if no one drank coffee</span></span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee0, <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the mean predicted probability of CVD under both scenarios</span></span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee1)</span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee0)</span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the average causal effect (risk difference)</span></span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>causal_effect <span class="ot">&lt;-</span> mean_pred_coffee1 <span class="sc">-</span> mean_pred_coffee0</span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>causal_effect</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 1 (everyone drinks coffee)</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>data_coffee1 <span class="ot">&lt;-</span> data</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>data_coffee1<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if all drank coffee</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee1, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a copy of the data with coffee set to 0 (no one drinks coffee)</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>data_coffee0 <span class="ot">&lt;-</span> data</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>data_coffee0<span class="sc">$</span>coffee <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict the probability of CVD for everyone if no one drank coffee</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">predict</span>(outcome_model, <span class="at">newdata =</span> data_coffee0, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the mean predicted probability of CVD under both scenarios</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee1 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee1)</span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>mean_pred_coffee0 <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_coffee0)</span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-19"><a href="#cb44-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the average causal effect (risk difference)</span></span>
+<span id="cb44-20"><a href="#cb44-20" aria-hidden="true" tabindex="-1"></a>causal_effect <span class="ot">&lt;-</span> mean_pred_coffee1 <span class="sc">-</span> mean_pred_coffee0</span>
+<span id="cb44-21"><a href="#cb44-21" aria-hidden="true" tabindex="-1"></a>causal_effect</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.06703175</code></pre>
 </div>
@@ -601,7 +647,7 @@ Number of Fisher Scoring iterations: 4</code></pre>
 <section id="r-session-info" class="level1">
 <h1>R session info</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>R version 4.4.1 (2024-06-14 ucrt)
 Platform: x86_64-w64-mingw32/x64
@@ -622,7 +668,8 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] epiR_2.0.76        survival_3.6-4     ggcorrplot_0.1.4.1 ggplot2_3.5.1     
+[1] randomForest_4.7-1.2 rpart_4.1.23         epiR_2.0.76         
+[4] survival_3.6-4       ggcorrplot_0.1.4.1   ggplot2_3.5.1       
 
 loaded via a namespace (and not attached):
  [1] gtable_0.3.5            xfun_0.45               htmlwidgets_1.6.4      
